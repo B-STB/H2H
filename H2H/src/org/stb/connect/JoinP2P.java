@@ -11,6 +11,7 @@ import org.hive2hive.core.api.interfaces.IH2HNode;
 import org.hive2hive.core.api.interfaces.INetworkConfiguration;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
+import org.hive2hive.core.network.NetworkManager;
 import org.hive2hive.processframework.exceptions.InvalidProcessStateException;
 import org.hive2hive.processframework.exceptions.ProcessExecutionException;
 import org.stb.file.transfer.TransferFile;
@@ -30,13 +31,16 @@ public class JoinP2P {
 
 		IFileConfiguration fileConfig = FileConfiguration.createDefault();
 
-		INetworkConfiguration netConfig2 = NetworkConfiguration.create("second", InetAddress.getByName("192.168.1.9"));
+		INetworkConfiguration networkConfiguration = NetworkConfiguration.create("second", InetAddress.getByName("192.168.1.9"));
 		IH2HNode peerNode2 = H2HNode.createNode(fileConfig);
-		peerNode2.connect(netConfig2);
+		peerNode2.connect(networkConfiguration);
 
 		System.out.println("IS " + peerNode2.toString() + "NODE 2 CONNECTED --" + peerNode2.isConnected());
-
+		System.out.println("peerNode2 connected to" + networkConfiguration.getBootstapPeer());
 		TransferFile tf = new TransferFile();
 		tf.initiateTransfer(peerNode2);
+		
+		
+		
 	}
 }
