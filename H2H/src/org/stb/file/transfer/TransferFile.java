@@ -2,6 +2,9 @@ package org.stb.file.transfer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.hive2hive.core.api.interfaces.IFileManager;
@@ -15,6 +18,7 @@ import org.hive2hive.core.events.framework.interfaces.file.IFileShareEvent;
 import org.hive2hive.core.events.framework.interfaces.file.IFileUpdateEvent;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
+import org.hive2hive.core.model.PermissionType;
 import org.hive2hive.core.security.UserCredentials;
 import org.hive2hive.processframework.exceptions.InvalidProcessStateException;
 import org.hive2hive.processframework.exceptions.ProcessExecutionException;
@@ -23,9 +27,10 @@ import org.hive2hive.processframework.interfaces.IProcessComponent;
 import net.engio.mbassy.listener.Handler;
 import net.engio.mbassy.listener.Listener;
 import net.engio.mbassy.listener.References;
+import net.tomp2p.dht.PeerDHT;
 
 public class TransferFile {
-	public void initiateTransfer(IH2HNode peerNode) throws IOException, InvalidProcessStateException,
+	public void initiateTransfer(IH2HNode peerNode, PeerDHT connectedPeer) throws IOException, InvalidProcessStateException,
 			ProcessExecutionException, NoPeerConnectionException, NoSessionException, IllegalArgumentException {
 
 		ExampleFileAgent node1FileAgent = doLoginAndRegister(peerNode);
@@ -35,21 +40,24 @@ public class TransferFile {
 		File file = new File(node1FileAgent.getRoot(), "a.txt");
 
 		FileUtils.write(file, "Hi");
-		fileManager.createAddProcess(file).execute();
-
+		//fileManager.createAddProcess(file).execute();
+		System.out.println(node1FileAgent.getRoot());
 		
+		
+		
+		System.out.println("Shared ----");
 		
 	}
 
-	public void downloadFilesFromNetwork(IFileManager fileManager) {
-		System.out.println("Starting with File Manager" + fileManager.toString());
+	public void downloadFilesFromNetwork(PeerDHT connectedPeer) {
+		System.out.println("Starting with File Manager" + connectedPeer.toString());
 	}
 
 	private ExampleFileAgent doLoginAndRegister(IH2HNode peerNode)
-			throws NoPeerConnectionException, InvalidProcessStateException, ProcessExecutionException {
+			throws NoPeerConnectionException, InvalidProcessStateException, ProcessExecutionException, NoSessionException, IllegalArgumentException {
 		IUserManager userManager = peerNode.getUserManager();
 
-		UserCredentials credentials = new UserCredentials("ajitesh.k@betsol.com", "#####", "secret-pin");
+		UserCredentials credentials = new UserCredentials("ajitesh.k@betsol.com", "Sonal.8792", "secret-pin");
 
 		boolean isRegistered = userManager.isRegistered("ajitesh.k@betsol.com");
 
@@ -61,7 +69,7 @@ public class TransferFile {
 		ExampleFileAgent node1FileAgent = new ExampleFileAgent();
 
 		System.out.println("Is User Registered" + isRegistered);
-
+		
 		// Path rootDirectory = Paths.get("D://git1");
 		// IProcessComponent<Void> loginUser =
 		// userManager.login(credentials,rootDirectory).await;
@@ -69,6 +77,11 @@ public class TransferFile {
 		IProcessComponent<Void> loginUser = userManager.createLoginProcess(credentials, node1FileAgent);
 		loginUser.execute();
 		System.out.println("Is User LOGGEDIN" + userManager.isLoggedIn());
+		
+		IFileManager fileManager = peerNode.getFileManager();
+		File f = new File(node1FileAgent.getRoot(),"Tests");
+		f.mkdirs();
+		fileManager.createShareProcess(f, "ajitesh.k@betsol.com",PermissionType.READ).execute();
 		return node1FileAgent;
 	}
 
