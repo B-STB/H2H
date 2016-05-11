@@ -57,7 +57,7 @@ public class TransferFile {
 			throws NoPeerConnectionException, InvalidProcessStateException, ProcessExecutionException, NoSessionException, IllegalArgumentException {
 		IUserManager userManager = peerNode.getUserManager();
 
-		UserCredentials credentials = new UserCredentials("ajitesh.k@betsol.com", "Sonal.8792", "secret-pin");
+		UserCredentials credentials = new UserCredentials("ajitesh.k@betsol.com", "###.8792", "secret-pin");
 
 		boolean isRegistered = userManager.isRegistered("ajitesh.k@betsol.com");
 
