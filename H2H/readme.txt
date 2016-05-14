@@ -1,4 +1,4 @@
-Run the build.xml.
+﻿Run the build.xml.
 Copy the folder h2h to the required destination.
 Navigate inside the folder h2h.
 
