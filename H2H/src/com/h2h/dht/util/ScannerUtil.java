@@ -19,78 +19,71 @@ public class ScannerUtil {
 
 	public static void main(String[] arguments) {
 
-		String ip, username, password, pin, path, fileToTransfer;
+		String ip = null, username, password, pin, path, fileToTransfer;
 
-		Scanner input = new Scanner(System.in);
 		System.out.println("Select Option");
 		System.out.println("1.Create P2P");
 		System.out.println("2.Join P2P");
 
-		Scanner scanOption = new Scanner(System.in);
-		String option = scanOption.next();
-		// scanOption.close();
+		String option = null;
+		try (Scanner scanOption = new Scanner(System.in)) {
+			option = scanOption.next();
+			System.out.println("User has selected option : " + option);
+			// scanOption.close();
 
-		System.out.println("User has selected option : " + option);
-
-		System.out.print("Enter the Ip of the node to create : ");
-		Scanner scanIp = new Scanner(System.in);
-		ip = scanIp.nextLine();
-		// scanIp.close();
-
-		System.out.print("Enter username : ");
-		Scanner scanUsername = new Scanner(System.in);
-		username = scanUsername.next();
-		// scanUsername.close();
-
-		System.out.print("Enter password : ");
-		Scanner scanPassword = new Scanner(System.in);
-		password = scanPassword.next();
-		// scanPassword.close();
-
-		System.out.print("Enter pin : ");
-		Scanner scanPin = new Scanner(System.in);
-		pin = scanPin.next();
-		// scanPin.close();1
-
-		System.out.print("Enter path to store a file : ");
-		Scanner scanPath = new Scanner(System.in);
-		path = scanPath.next();
-
-		logger.info("Input : -------------");
-		logger.info("IP : {}", ip);
-		logger.info("Username : {}", username);
-		logger.info("Password : {}", password);
-		logger.info("Pin : {}", pin);
-		logger.info("File path : {}", path);
-
-		if (option.equals("1")) {
-			logger.info("Creating a node.");
-			CreateP2P createPeerNode = new CreateP2P();
-			try {
-
-				createPeerNode.create(ip, username, password, pin, path);
-				logger.info("------------Node Created----------");
-			} catch (UnknownHostException | InvalidProcessStateException | ProcessExecutionException
-					| NoPeerConnectionException e) {
-				e.printStackTrace();
+			if (!option.contains("1")) {
+				System.out.print("Enter the Ip of the node to create : ");
+				ip = scanOption.next();
 			}
-		}
-		if (option.equals("2")) {
+			// scanIp.close();
 
-			System.out.print("Path of the file to  transfer : ");
+			System.out.print("Enter username : ");
+			username = scanOption.next();
+			// scanUsername.close();
+			System.out.print("Enter password : ");
+			password = scanOption.next();
+			// scanPassword.close();
 
-			Scanner scanFileTransfer = new Scanner(System.in);
-			fileToTransfer = scanFileTransfer.next();
+			System.out.print("Enter pin : ");
+			pin = scanOption.next();
+			// scanPin.close();1
 
-			JoinP2P joinNode = new JoinP2P();
-			try {
-				logger.info("Joining with a node.");
-				logger.info("File to transfer : {}", fileToTransfer);
-				joinNode.join(ip, username, password, pin, path, fileToTransfer);
-				logger.info("------------Peer Joined----------");
-			} catch (InvalidProcessStateException | ProcessExecutionException | NoPeerConnectionException
-					| NoSessionException | IllegalArgumentException | IOException e) {
-				e.printStackTrace();
+			System.out.print("Enter path to store a file : ");
+			path = scanOption.next();
+
+			logger.info("Input : -------------");
+			logger.info("IP : {}", ip);
+			logger.info("Username : {}", username);
+			logger.info("Password : {}", password);
+			logger.info("Pin : {}", pin);
+			logger.info("File path : {}", path);
+
+			if (option.contains("1")) {
+				logger.info("Creating a node.");
+				CreateP2P createPeerNode = new CreateP2P();
+				try {
+
+					createPeerNode.create(username, password, pin, path);
+					logger.info("------------Node Created----------");
+				} catch (UnknownHostException | InvalidProcessStateException | ProcessExecutionException
+						| NoPeerConnectionException e) {
+					e.printStackTrace();
+				}
+			} else {
+
+				System.out.print("Path of the file to  transfer : ");
+
+				fileToTransfer = scanOption.next();
+				JoinP2P joinNode = new JoinP2P();
+				try {
+					logger.info("Joining with a node.");
+					logger.info("File to transfer : {}", fileToTransfer);
+					joinNode.join(ip, username, password, pin, path, fileToTransfer);
+					logger.info("------------Peer Joined----------");
+				} catch (InvalidProcessStateException | ProcessExecutionException | NoPeerConnectionException
+						| NoSessionException | IllegalArgumentException | IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

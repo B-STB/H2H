@@ -26,8 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stb.file.transfer.ExampleFileAgent;
 
-import com.h2h.dht.util.ScannerUtil;
-
 import net.engio.mbassy.listener.Handler;
 import net.engio.mbassy.listener.Listener;
 import net.engio.mbassy.listener.References;
@@ -36,7 +34,7 @@ public class CreateP2P {
 
 	private static final Logger logger = LoggerFactory.getLogger(CreateP2P.class);
 	
-	public void create(String ip, String username, String password, String pin, String filePath) throws UnknownHostException,
+	public void create(String username, String password, String pin, String filePath) throws UnknownHostException,
 			InvalidProcessStateException, ProcessExecutionException, NoPeerConnectionException {
 		// INetworkConfiguration netConfig =
 		// NetworkConfiguration.createInitialLocalPeer("first");
@@ -51,15 +49,15 @@ public class CreateP2P {
 
 		String nodeId = UUID.randomUUID().toString();
 		System.out.println("nodeId: " + nodeId);
-		InetAddress address = InetAddress.getByName(ip);
+		InetAddress address = InetAddress.getLocalHost();
 		NetworkConfiguration networkConfiguration = NetworkConfiguration.create(nodeId, address);
 
 		peerNode.connect(networkConfiguration);
 
-		UserCredentials alice = new UserCredentials(ip, username, pin);
-		peerNode.getUserManager().createRegisterProcess(alice).execute();
+		UserCredentials user = new UserCredentials(username, password, pin);
+		peerNode.getUserManager().createRegisterProcess(user).execute();
 		ExampleFileAgent node1FileAgent = new ExampleFileAgent(filePath);
-		peerNode.getUserManager().createLoginProcess(alice, node1FileAgent).execute();
+		peerNode.getUserManager().createLoginProcess(user, node1FileAgent).execute();
 
 		logger.info("Is Connected {}  - {}" , peerNode.toString() , peerNode.isConnected());
 
