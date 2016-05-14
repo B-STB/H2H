@@ -4,4 +4,4 @@ Navigate inside the folder h2h.
 
 Run the application by using-
 
-java -cp "h2h.jar;lib/*" org.stb.main.StartUp
+java -cp "./h2h.jar;./lib/*" org.stb.main.StartUp
