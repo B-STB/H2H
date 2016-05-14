@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project H2H with libraries in sub-folder">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <!--define folder properties-->
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value=".."/>
+    <property name="dir.jarfile" value="${dir.buildfile}/h2h"/>
+    <target name="create_run_jar">
+        <jar destfile="${dir.jarfile}/h2h.jar">
+            <manifest>
+                <attribute name="Main-Class" value="com.h2h.dht.util.ScannerUtil"/>
+                <attribute name="Class-Path" value=". lib/bcprov-jdk15on-1.51.jar lib/commons-io-2.4.jar lib/config-1.2.1.jar lib/el-api-2.2.jar lib/fst-2.23.jar lib/gcm-server-1.0.2.jar lib/javassist-3.18.1-GA.jar lib/json-simple-1.1.jar lib/logback-classic-1.1.1.jar lib/logback-core-1.1.1.jar lib/mbassador-1.2.0.jar lib/objenesis-2.1.jar lib/slf4j-api-1.7.6.jar lib/weupnp-0.1.2.jar lib/netty-buffer-4.0.36.Final.jar lib/netty-common-4.0.36.Final.jar lib/netty-transport-4.0.36.Final.jar lib/org.hive2hive.client-1.2.3-SNAPSHOT.jar lib/org.hive2hive.core-1.2.3-SNAPSHOT.jar lib/org.hive2hive.processframework-1.2-SNAPSHOT.jar lib/tomp2p-client-5.0-Beta9-SNAPSHOT.jar lib/tomp2p-core-5.0-Beta9-SNAPSHOT.jar lib/tomp2p-dht-5.0-Beta9-SNAPSHOT.jar lib/tomp2p-nat-5.0-Beta9-SNAPSHOT.jar lib/tomp2p-replication-5.0-Beta9-SNAPSHOT.jar lib/tomp2p-social-5.0-Beta9-SNAPSHOT.jar lib/tomp2p-storage-5.0-Beta9-SNAPSHOT.jar lib/tomp2p-tracker-5.0-Beta9-SNAPSHOT.jar"/>
+            </manifest>
+            <fileset dir="bin"/>
+            <fileset dir="lib"/>
+        </jar>
+        <delete dir="${dir.jarfile}/lib"/>
+        <mkdir dir="${dir.jarfile}/lib"/>
+        <copy file="lib/bcprov-jdk15on-1.51.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/commons-io-2.4.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/config-1.2.1.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/el-api-2.2.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/fst-2.23.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/gcm-server-1.0.2.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/javassist-3.18.1-GA.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/json-simple-1.1.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/logback-classic-1.1.1.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/logback-core-1.1.1.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/mbassador-1.2.0.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/objenesis-2.1.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/slf4j-api-1.7.6.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/weupnp-0.1.2.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/netty-buffer-4.0.36.Final.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/netty-common-4.0.36.Final.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/netty-transport-4.0.36.Final.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/org.hive2hive.client-1.2.3-SNAPSHOT.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/org.hive2hive.core-1.2.3-SNAPSHOT.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/org.hive2hive.processframework-1.2-SNAPSHOT.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/tomp2p-client-5.0-Beta9-SNAPSHOT.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/tomp2p-core-5.0-Beta9-SNAPSHOT.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/tomp2p-dht-5.0-Beta9-SNAPSHOT.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/tomp2p-nat-5.0-Beta9-SNAPSHOT.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/tomp2p-replication-5.0-Beta9-SNAPSHOT.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/tomp2p-social-5.0-Beta9-SNAPSHOT.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/tomp2p-storage-5.0-Beta9-SNAPSHOT.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="lib/tomp2p-tracker-5.0-Beta9-SNAPSHOT.jar" todir="${dir.jarfile}/lib"/>
+    </target>
+</project>
