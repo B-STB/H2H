@@ -1,7 +1,9 @@
 package org.stb.connect;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.hive2hive.core.api.H2HNode;
@@ -11,26 +13,23 @@ import org.hive2hive.core.api.interfaces.IFileConfiguration;
 import org.hive2hive.core.api.interfaces.IFileManager;
 import org.hive2hive.core.api.interfaces.IH2HNode;
 import org.hive2hive.core.api.interfaces.INetworkConfiguration;
-import org.hive2hive.core.events.framework.interfaces.IFileEventListener;
-import org.hive2hive.core.events.framework.interfaces.file.IFileAddEvent;
-import org.hive2hive.core.events.framework.interfaces.file.IFileDeleteEvent;
-import org.hive2hive.core.events.framework.interfaces.file.IFileMoveEvent;
-import org.hive2hive.core.events.framework.interfaces.file.IFileShareEvent;
-import org.hive2hive.core.events.framework.interfaces.file.IFileUpdateEvent;
+import org.hive2hive.core.api.interfaces.IUserManager;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
+import org.hive2hive.core.model.PermissionType;
+import org.hive2hive.core.security.UserCredentials;
 import org.hive2hive.processframework.exceptions.InvalidProcessStateException;
 import org.hive2hive.processframework.exceptions.ProcessExecutionException;
-import org.stb.file.transfer.TransferFile;
-
-import net.engio.mbassy.listener.Handler;
-import net.engio.mbassy.listener.Listener;
-import net.engio.mbassy.listener.References;
-import net.tomp2p.dht.PeerDHT;
+import org.hive2hive.processframework.interfaces.IProcessComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.stb.file.transfer.ExampleFileAgent;
 
 public class JoinP2P {
 
-	public void join() throws InvalidProcessStateException, ProcessExecutionException, NoPeerConnectionException,
+	private static final Logger logger = LoggerFactory.getLogger(JoinP2P.class);
+	
+	public void join(String peerIp, String username, String password, String pin, String path, String fileToTransfer) throws InvalidProcessStateException, ProcessExecutionException, NoPeerConnectionException,
 			NoSessionException, IllegalArgumentException, IOException {
 		// NetworkConfiguration netConfig2 =
 		// NetworkConfiguration.create(InetAddress.getLocalHost()).setBootstrapPort(4777);
@@ -43,97 +42,69 @@ public class JoinP2P {
 
 		IFileConfiguration fileConfig = FileConfiguration.createDefault();
 
-		INetworkConfiguration networkConfiguration = NetworkConfiguration.create("second", InetAddress.getByName("192.168.1.9"));
-		IH2HNode peerNode2 = H2HNode.createNode(fileConfig);
-		peerNode2.connect(networkConfiguration);
+		IH2HNode myPeerNode = H2HNode.createNode(fileConfig);
+		INetworkConfiguration networkConfiguration = NetworkConfiguration.create(InetAddress.getByName(peerIp)).setBootstrapPort(4622);
+		System.out.println("My nodeId: " + networkConfiguration.getNodeID());
+	//	NetworkConfiguration networkConfigurationBootstrapNode = NetworkConfiguration.create(InetAddress.getByName("148.147.222.160"));
+		
+	//	System.out.println("networkConfigurationBootstrapNode - " + networkConfigurationBootstrapNode);
+		//IH2HNode bootstrapPeerNode = H2HNode.createNode(fileConfig);
+		
+		myPeerNode.connect(networkConfiguration);
+		logger.info("IS  {}    NODE 2 CONNECTED -- {}" , myPeerNode.toString() , myPeerNode.isConnected());
+		logger.info("peerNode2 {}   NODE 2 CONNECTED -- {}" , myPeerNode.toString() , myPeerNode.getPeer().peer());
 
-		System.out.println("IS " + peerNode2.toString() + "NODE 2 CONNECTED --" + peerNode2.isConnected());
+		IUserManager userManager = myPeerNode.getUserManager();
+//		
+//		UserCredentials credentials = new UserCredentials("ajitesh.k@avaya.com", "Betsol@2016", "secret-pin");
+//
+//		boolean isRegistered = userManager.isRegistered("ajitesh.k@avaya.com");
+
+		UserCredentials credentials = new UserCredentials(username, password, pin);
+
+		boolean isRegistered = userManager.isRegistered(username);
+
+		if (!isRegistered) {
+			IProcessComponent<Void> registerUser = userManager.createRegisterProcess(credentials);
+			registerUser.execute();
+		}
+
+		ExampleFileAgent node1FileAgent = new ExampleFileAgent(path);
+
+		logger.info("Is User Registered {}" , isRegistered);
+
+		// Path rootDirectory = Paths.get("D://git1");
+		// IProcessComponent<Void> loginUser =
+		// userManager.login(credentials,rootDirectory).await;
+
+		IProcessComponent<Void> loginUser = userManager.createLoginProcess(credentials, node1FileAgent);
+		loginUser.execute();
+		logger.info("Is User LOGGEDIN {} " , userManager.isLoggedIn());
+		IFileManager fileManager = myPeerNode.getFileManager();
 		
-		PeerDHT connectedPeer = peerNode2.getPeer();
+		logger.info("node1FileAgent.getRoot() {} ",node1FileAgent.getRoot());
+
+		File file = new File(node1FileAgent.getRoot(), "afnhjymk");
+
+		//FileUtils.write(file, "Hi THis is OptimUs Prime");
+		File file2 = Paths.get(fileToTransfer).toFile();
 		
-		System.out.println("peerNode2 connected to" + connectedPeer);
-		TransferFile tf = new TransferFile();
-		tf.initiateTransfer(peerNode2,connectedPeer);
+		FileUtils.copyFile(file2, file);
 		
-		peerNode2.getFileManager().subscribeFileEvents(new ExampleEventListener(peerNode2.getFileManager()));
+		fileManager.createAddProcess(file).execute();
 		
-		System.out.println("Sunscribed to events");
+		logger.info("Added");
+		/*File folderAtAlice = new File(node1FileAgent.getRoot(), "shared-folder");
+		folderAtAlice.mkdirs();
+//		fileManager.createShareProcess(folderAtAlice, "ajitesh.k@avaya.com", PermissionType.WRITE);
+		fileManager.createShareProcess(folderAtAlice, "Alice", PermissionType.WRITE);*/
+		
+		
+		
+		//		TransferFile tf = new TransferFile();
+//		tf.initiateTransfer(myPeerNode);
+		
+		
+		
 	}
-	
-	// A Strong reference is necessary if this object is not held in any
-	// variable, otherwise GC would clean it
-	// and events are not triggered anymore. So keep either a reference to this
-	// listener object or add the
-	// strong reference annotation.
-	@Listener(references = References.Strong)
-	private static class ExampleEventListener implements IFileEventListener {
-
-		private final IFileManager fileManager;
-
-		public ExampleEventListener(IFileManager fileManager) {
-			this.fileManager = fileManager;
-		}
-
-		@Override
-		@Handler
-		public void onFileAdd(IFileAddEvent fileEvent) {
-			System.out.println("File was added: " + fileEvent.getFile().getName());
-			try {
-				// download the new file
-				fileManager.createDownloadProcess(fileEvent.getFile()).execute();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		@Handler
-		public void onFileUpdate(IFileUpdateEvent fileEvent) {
-			System.out.println("File was updated: " + fileEvent.getFile().getName());
-			try {
-				// download the newest version
-				fileManager.createDownloadProcess(fileEvent.getFile()).execute();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		@Handler
-		public void onFileDelete(IFileDeleteEvent fileEvent) {
-			System.out.println("File was deleted: " + fileEvent.getFile().getName());
-			// delete it at the event receiver as well
-			fileEvent.getFile().delete();
-		}
-
-		@Override
-		@Handler
-		public void onFileMove(IFileMoveEvent fileEvent) {
-			try {
-				// Move the file to the new destination if it exists
-				if (fileEvent.isFile() && fileEvent.getSrcFile().exists()) {
-					FileUtils.moveFile(fileEvent.getSrcFile(), fileEvent.getDstFile());
-					System.out
-							.println("File was moved from " + fileEvent.getSrcFile() + " to " + fileEvent.getDstFile());
-				} else if (fileEvent.isFolder() && fileEvent.getSrcFile().exists()) {
-					FileUtils.moveDirectory(fileEvent.getSrcFile(), fileEvent.getDstFile());
-					System.out.println(
-							"Folder was moved from " + fileEvent.getSrcFile() + " to " + fileEvent.getDstFile());
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		@Handler
-		public void onFileShare(IFileShareEvent fileEvent) {
-			System.out.println("File was shared by " + fileEvent.getInvitedBy());
-			// Currently, no further actions necessary. The invitation is
-			// accepted
-			// automatically and 'onFileAdd' is called in an instant.
-		}
-
-	}
-
 }

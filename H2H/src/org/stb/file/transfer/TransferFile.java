@@ -41,7 +41,6 @@ public class TransferFile {
 
 		FileUtils.write(file, "Hi");
 		//fileManager.createAddProcess(file).execute();
-		System.out.println(node1FileAgent.getRoot());
 		
 		
 		
@@ -57,16 +56,16 @@ public class TransferFile {
 			throws NoPeerConnectionException, InvalidProcessStateException, ProcessExecutionException, NoSessionException, IllegalArgumentException {
 		IUserManager userManager = peerNode.getUserManager();
 
-		UserCredentials credentials = new UserCredentials("ajitesh.k@betsol.com", "###.8792", "secret-pin");
+		UserCredentials credentials = new UserCredentials("hakim.s@betsol.com", "asd", "secret-pin");
 
-		boolean isRegistered = userManager.isRegistered("ajitesh.k@betsol.com");
+		boolean isRegistered = userManager.isRegistered("hakim.s@betsol.com");
 
 		if (!isRegistered) {
 			IProcessComponent<Void> registerUser = userManager.createRegisterProcess(credentials);
 			registerUser.execute();
 		}
 
-		ExampleFileAgent node1FileAgent = new ExampleFileAgent();
+		ExampleFileAgent node1FileAgent = new ExampleFileAgent("C:\\Temp");
 
 		System.out.println("Is User Registered" + isRegistered);
 		

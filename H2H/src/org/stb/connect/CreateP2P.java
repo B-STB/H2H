@@ -1,6 +1,9 @@
 package org.stb.connect;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.hive2hive.core.api.H2HNode;
@@ -15,6 +18,15 @@ import org.hive2hive.core.events.framework.interfaces.file.IFileDeleteEvent;
 import org.hive2hive.core.events.framework.interfaces.file.IFileMoveEvent;
 import org.hive2hive.core.events.framework.interfaces.file.IFileShareEvent;
 import org.hive2hive.core.events.framework.interfaces.file.IFileUpdateEvent;
+import org.hive2hive.core.exceptions.NoPeerConnectionException;
+import org.hive2hive.core.security.UserCredentials;
+import org.hive2hive.processframework.exceptions.InvalidProcessStateException;
+import org.hive2hive.processframework.exceptions.ProcessExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.stb.file.transfer.ExampleFileAgent;
+
+import com.h2h.dht.util.ScannerUtil;
 
 import net.engio.mbassy.listener.Handler;
 import net.engio.mbassy.listener.Listener;
@@ -22,29 +34,45 @@ import net.engio.mbassy.listener.References;
 
 public class CreateP2P {
 
-	public void create(){
-	//	INetworkConfiguration netConfig = NetworkConfiguration.createInitialLocalPeer("first");
-		
+	private static final Logger logger = LoggerFactory.getLogger(CreateP2P.class);
+	
+	public void create(String ip, String username, String password, String pin, String filePath) throws UnknownHostException,
+			InvalidProcessStateException, ProcessExecutionException, NoPeerConnectionException {
+		// INetworkConfiguration netConfig =
+		// NetworkConfiguration.createInitialLocalPeer("first");
+
+			
 		IFileConfiguration fileConfig = FileConfiguration.createDefault();
 
 		IH2HNode peerNode = H2HNode.createNode(fileConfig);
-		
-		NetworkConfiguration networkConfiguration = NetworkConfiguration.createInitial();
+
+		// NetworkConfiguration networkConfiguration =
+		// NetworkConfiguration.createInitial();
+
+		String nodeId = UUID.randomUUID().toString();
+		System.out.println("nodeId: " + nodeId);
+		InetAddress address = InetAddress.getByName(ip);
+		NetworkConfiguration networkConfiguration = NetworkConfiguration.create(nodeId, address);
+
 		peerNode.connect(networkConfiguration);
-		
-		
-		System.out.println("Is Connected  "+peerNode.toString() + "  "+peerNode.isConnected());
-		
-		System.out.println("networkConfiguration.getNodeID() "+networkConfiguration.getNodeID());
-		
-		System.out.println("networkConfiguration.getBootstapPeer() "+networkConfiguration.getBootstapPeer());
-		System.out.println("networkConfiguration.getBootstrapAddress() "+networkConfiguration.getBootstrapAddress());
-		
+
+		UserCredentials alice = new UserCredentials(ip, username, pin);
+		peerNode.getUserManager().createRegisterProcess(alice).execute();
+		ExampleFileAgent node1FileAgent = new ExampleFileAgent(filePath);
+		peerNode.getUserManager().createLoginProcess(alice, node1FileAgent).execute();
+
+		logger.info("Is Connected {}  - {}" , peerNode.toString() , peerNode.isConnected());
+
+		logger.info("networkConfiguration.getNodeID() {} " , networkConfiguration.getNodeID());
+
+		logger.info("networkConfiguration.getBootstapPeer() {} " , networkConfiguration.getBootstapPeer());
+		logger.info("networkConfiguration.getBootstrapAddress() {}" ,networkConfiguration.getBootstrapAddress());
+
 		peerNode.getFileManager().subscribeFileEvents(new ExampleEventListener(peerNode.getFileManager()));
-		
-		System.out.println("Sunscribed to events");
+
+		logger.info("Sunscribed to events");
 	}
-	
+
 	// A Strong reference is necessary if this object is not held in any
 	// variable, otherwise GC would clean it
 	// and events are not triggered anymore. So keep either a reference to this

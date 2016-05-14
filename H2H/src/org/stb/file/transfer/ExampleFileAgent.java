@@ -17,8 +17,8 @@ public class ExampleFileAgent implements IFileAgent {
 
 	private final File root;
 
-	public ExampleFileAgent() {
-		root = new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString());
+	public ExampleFileAgent(String path) {
+		root = new File(path, UUID.randomUUID().toString());
 		root.mkdirs();
 	}
 

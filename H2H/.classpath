@@ -2,30 +2,30 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2.jar" sourcepath="C:/Users/ajitesh.k/Downloads/Hive Lib/Hive2Hive-1.2.2"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2-javadoc.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2-tests.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/bcprov-jdk15on-1.51.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/commons-io-2.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/config-1.2.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/el-api-2.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/fst-2.23.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/javassist-3.18.1-GA.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/json-simple-1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/logback-classic-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/logback-core-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/mbassador-1.2.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/netty-buffer-4.0.25.Final.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/netty-common-4.0.25.Final.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/netty-transport-4.0.25.Final.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/objenesis-2.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/org.hive2hive.processframework-1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/slf4j-api-1.7.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/tomp2p-core-5.0-Beta5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/tomp2p-dht-5.0-Beta5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/tomp2p-nat-5.0-Beta5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/tomp2p-replication-5.0-Beta5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/ajitesh.k/Downloads/Hive Lib/org.hive2hive.core-1.2.2/org.hive2hive.core-1.2.2/lib/weupnp-0.1.2.jar"/>
+	<classpathentry kind="lib" path="src/lib/bcprov-jdk15on-1.51.jar"/>
+	<classpathentry kind="lib" path="src/lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="src/lib/config-1.2.1.jar"/>
+	<classpathentry kind="lib" path="src/lib/el-api-2.2.jar"/>
+	<classpathentry kind="lib" path="src/lib/fst-2.23.jar"/>
+	<classpathentry kind="lib" path="src/lib/gcm-server-1.0.2.jar"/>
+	<classpathentry kind="lib" path="src/lib/javassist-3.18.1-GA.jar"/>
+	<classpathentry kind="lib" path="src/lib/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="src/lib/logback-classic-1.1.1.jar"/>
+	<classpathentry kind="lib" path="src/lib/logback-core-1.1.1.jar"/>
+	<classpathentry kind="lib" path="src/lib/mbassador-1.2.0.jar"/>
+	<classpathentry kind="lib" path="src/lib/netty-buffer-4.0.25.Final.jar"/>
+	<classpathentry kind="lib" path="src/lib/netty-common-4.0.25.Final.jar"/>
+	<classpathentry kind="lib" path="src/lib/netty-transport-4.0.25.Final.jar"/>
+	<classpathentry kind="lib" path="src/lib/objenesis-2.1.jar"/>
+	<classpathentry kind="lib" path="src/lib/org.hive2hive.client-1.2.2.jar"/>
+	<classpathentry kind="lib" path="src/lib/org.hive2hive.core-1.2.2.jar"/>
+	<classpathentry kind="lib" path="src/lib/org.hive2hive.processframework-1.1.jar"/>
+	<classpathentry kind="lib" path="src/lib/slf4j-api-1.7.6.jar"/>
+	<classpathentry kind="lib" path="src/lib/tomp2p-android-5.0-Beta5.jar"/>
+	<classpathentry kind="lib" path="src/lib/tomp2p-core-5.0-Beta5.jar"/>
+	<classpathentry kind="lib" path="src/lib/tomp2p-dht-5.0-Beta5.jar"/>
+	<classpathentry kind="lib" path="src/lib/tomp2p-nat-5.0-Beta5.jar"/>
+	<classpathentry kind="lib" path="src/lib/tomp2p-replication-5.0-Beta5.jar"/>
+	<classpathentry kind="lib" path="src/lib/weupnp-0.1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -11,11 +11,11 @@ import org.stb.connect.JoinP2P;
 
 public class StartUp {
 
-	public static void main(String[] args) throws InvalidProcessStateException, ProcessExecutionException, NoPeerConnectionException, NoSessionException, IllegalArgumentException, IOException {
-		/*CreateP2P createP2P = new CreateP2P();
-		createP2P.create();
+	/*public static void main(String[] args) throws InvalidProcessStateException, ProcessExecutionException, NoPeerConnectionException, NoSessionException, IllegalArgumentException, IOException {
+		CreateP2P createP2P = new CreateP2P();
+//		createP2P.create();
 		
-		System.out.println("Created");*/
+		System.out.println("Created");
 		
 		
 		
@@ -25,6 +25,6 @@ public class StartUp {
 		joinP2P.join();
 		
 		System.out.println("Joined");
-	}
+	}*/
 
 }
