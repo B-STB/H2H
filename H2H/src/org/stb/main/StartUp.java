@@ -1,7 +1,9 @@
 package org.stb.main;
 
+import java.io.Console;
 import java.io.IOException;
 
+import org.hive2hive.client.ConsoleClient;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
 import org.hive2hive.processframework.exceptions.InvalidProcessStateException;
@@ -27,4 +29,7 @@ public class StartUp {
 		System.out.println("Joined");
 	}*/
 
+	public static void main(String[] args) {
+		ConsoleClient.main(args);
+	}
 }

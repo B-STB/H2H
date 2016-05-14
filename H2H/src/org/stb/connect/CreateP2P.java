@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stb.file.transfer.ExampleFileAgent;
 
+import com.h2h.dht.util.ScannerUtil;
+
 import net.engio.mbassy.listener.Handler;
 import net.engio.mbassy.listener.Listener;
 import net.engio.mbassy.listener.References;
@@ -34,7 +36,7 @@ public class CreateP2P {
 
 	private static final Logger logger = LoggerFactory.getLogger(CreateP2P.class);
 	
-	public void create(String username, String password, String pin, String filePath) throws UnknownHostException,
+	public void create(String ip, String username, String password, String pin, String filePath) throws UnknownHostException,
 			InvalidProcessStateException, ProcessExecutionException, NoPeerConnectionException {
 		// INetworkConfiguration netConfig =
 		// NetworkConfiguration.createInitialLocalPeer("first");
@@ -49,7 +51,7 @@ public class CreateP2P {
 
 		String nodeId = UUID.randomUUID().toString();
 		System.out.println("nodeId: " + nodeId);
-		InetAddress address = InetAddress.getLocalHost();
+		InetAddress address = InetAddress.getByName(ip);
 		NetworkConfiguration networkConfiguration = NetworkConfiguration.create(nodeId, address);
 
 		peerNode.connect(networkConfiguration);

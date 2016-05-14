@@ -31,10 +31,8 @@ public class ScannerUtil {
 			System.out.println("User has selected option : " + option);
 			// scanOption.close();
 
-			if (!option.contains("1")) {
-				System.out.print("Enter the Ip of the node to create : ");
-				ip = scanOption.next();
-			}
+			System.out.print("Enter the Ip of the node to create : ");
+			ip = scanOption.next();
 			// scanIp.close();
 
 			System.out.print("Enter username : ");
@@ -63,7 +61,7 @@ public class ScannerUtil {
 				CreateP2P createPeerNode = new CreateP2P();
 				try {
 
-					createPeerNode.create(username, password, pin, path);
+					createPeerNode.create(ip, username, password, pin, path);
 					logger.info("------------Node Created----------");
 				} catch (UnknownHostException | InvalidProcessStateException | ProcessExecutionException
 						| NoPeerConnectionException e) {
