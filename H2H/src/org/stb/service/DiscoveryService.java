@@ -3,12 +3,12 @@ package org.stb.service;
 public interface DiscoveryService {
 
 	/**
-	 * Connect to data centers.
+	 * Connect to bootstrap nodes.
 	 *
-	 * @param dataCentersIps the data centers ips
+	 * @param bootstrapIps the bootstrap node ips
 	 * @return true, if any of the ips were successfully connected
 	 */
-	boolean connectToDataCenters(String... dataCentersIps);
+	boolean connectToBootstrapNodes(String... bootstrapIps);
 	
 	/**
 	 * Start dht network.
