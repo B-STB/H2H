@@ -114,7 +114,7 @@ public final class STBController {
 		//Perform file sync
 		List<String> fileListOnDHT = fileDHTService.getFileList(node);
 		
-		fileDHTService.syncFilesWithDHT(fileListOnDHT,new File(root));
+		fileDHTService.syncFilesWithDHT(node,fileListOnDHT,new File(root));
 		
 		//Get all files in STB share folder. Check if files in fileList are present there.
 	}
