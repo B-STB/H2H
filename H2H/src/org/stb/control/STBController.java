@@ -120,4 +120,8 @@ public final class STBController {
 		fileDHTService.startObserver(connectedNode,new File(root));
 		
 	}
+	
+	public void stop() throws Exception {
+		// TODO
+	}
 }

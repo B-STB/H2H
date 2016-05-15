@@ -1,5 +1,23 @@
 package org.stb.main;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stb.control.STBController;
 
 /**
@@ -9,15 +27,132 @@ import org.stb.control.STBController;
  */
 public class Main {
 
+	/** The Constant STB_STATUS. */
+	private static final String STB_STATUS = "stb.status";
+	
+	/** The Constant STB_LOCK. */
+	private static final String STB_LOCK = "stb.lock";
+	/** The Constant LOGGER. */
+	private static final Logger LOGGER = LoggerFactory.getLogger(STBController.class);
+
 	/**
 	 * The main method.
 	 *
-	 * @param args
-	 *            the arguments
-	 * @throws Exception
+	 * @param args            the arguments
+	 * @throws Exception the exception
 	 */
 	public static void main(String[] args) throws Exception {
-		STBController.getInstance().start();
+		lockAndLoad();
+	}
+
+	/**
+	 * Lock and load.
+	 */
+	private static void lockAndLoad() {
+		// Get a file channel for the file
+		Path lockFilePath = Paths.get(STB_LOCK);
+		Path statusFilePath = Paths.get(STB_STATUS);
+		if (!Files.exists(lockFilePath)) {
+			try {
+				Files.write(lockFilePath, "LOCK".getBytes());
+				Files.write(statusFilePath, "RUNNING".getBytes());
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+				return;
+			}
+		}
+		FileLock lock = null;
+		try (FileChannel channel = new RandomAccessFile(lockFilePath.toFile(), "rw").getChannel()) {
+			// Use the file channel to create a lock on the file.
+			// This method blocks until it can retrieve the lock.
+			lock = channel.lock();
+
+			/*
+			 * use channel.lock OR channel.tryLock();
+			 */
+
+			// Try acquiring the lock without blocking. This method returns
+			// null or throws an exception if the file is already locked.
+			lock = channel.tryLock();
+
+			if (lock != null) {
+				STBController.getInstance().start();
+				startShutDownWatcher(statusFilePath);
+			} else {
+				LOGGER.error("Could not start service as lock could not be acquired.");
+			}
+		} catch (OverlappingFileLockException e) {
+			// File is already locked in this thread or virtual machine
+			LOGGER.error("Could not start service as lock could not be acquired.");
+		} catch (Exception e) {
+			LOGGER.error("Could not start service due to error: ", e);
+		} finally {
+			// Release the lock - if it is not null!
+			if (lock != null) {
+				try {
+					lock.release();
+				} catch (IOException e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
+			try {
+				Files.deleteIfExists(lockFilePath);
+				Files.deleteIfExists(statusFilePath);
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+		}
+	}
+
+	/**
+	 * Start shut down watcher.
+	 *
+	 * @param statusFilePath the status file path
+	 */
+	private static void startShutDownWatcher(Path statusFilePath) {
+		try {
+			WatchService watcher = FileSystems.getDefault().newWatchService();
+			statusFilePath.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+
+			LOGGER.debug("Watch Service registered for dir: " + statusFilePath.getFileName());
+
+			while (true) {
+				WatchKey key;
+				try {
+					key = watcher.take();
+				} catch (InterruptedException ex) {
+					return;
+				}
+
+				for (WatchEvent<?> event : key.pollEvents()) {
+					WatchEvent.Kind<?> kind = event.kind();
+
+					@SuppressWarnings("unchecked")
+					WatchEvent<Path> ev = (WatchEvent<Path>) event;
+					Path fileName = ev.context();
+
+					System.out.println(kind.name() + ": " + fileName);
+
+					if (kind == ENTRY_MODIFY && fileName.toString().equals(STB_STATUS)) {
+						LOGGER.info("STB status file has changed! STB will be stopped.");
+						STBController.getInstance().stop();
+						break;
+					} else if (kind == ENTRY_DELETE) {
+						LOGGER.info("STB status file has been deleted! STB will be stopped.");
+						STBController.getInstance().stop();
+						break;
+					}
+				}
+
+				boolean valid = key.reset();
+				if (!valid) {
+					break;
+				}
+			}
+
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 
 }
