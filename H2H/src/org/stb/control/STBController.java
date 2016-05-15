@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 
 import org.hive2hive.core.api.interfaces.IH2HNode;
+import org.hive2hive.core.api.interfaces.IUserManager;
+import org.hive2hive.core.security.UserCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stb.service.CredentialRegisterService;
@@ -28,6 +30,8 @@ public final class STBController {
 
 	/** The Constant INSTANCE. */
 	private static final STBController INSTANCE = new STBController();
+
+	private static final String BOOTSTRAP_IDS = "bootstrap.ips";
 
 	/** The discovery service. */
 	private final DiscoveryService discoveryService;
@@ -68,14 +72,14 @@ public final class STBController {
 	public void start() throws Exception {
 		//Run discovery
 		//Get bootstrap node ips from properties file.
-		String bootstrapNodeIps = null;
-		boolean connectToBoostrapNodes = discoveryService.connectToBootstrapNodes(bootstrapNodeIps);
+		String bootstrapNodeIps = PropertyReader.getValue(BOOTSTRAP_IDS);
+		IH2HNode connectedNode = discoveryService.connectToBootstrapNodes(bootstrapNodeIps);
 		
 		//Read from properties file
 		boolean isBootstrapNode = true;
-		if (!connectToBoostrapNodes) {
+		if (connectedNode == null) {
 			if (isBootstrapNode) {
-				discoveryService.startDHTNetwork();
+				connectedNode = discoveryService.startDHTNetwork();
 			} else {
 				String message = "Could not connect to DHT network as all Bootstrap nodes are down.";
 				LOGGER.error(message);
@@ -93,7 +97,7 @@ public final class STBController {
 		UserCredential userCredential = new UserCredential(userId,password,pin);
 		//Get from stb.properties
 		
-		
+	
 		
 		// TODO Node should be the return type of connect or join network
 		IH2HNode node = null;
@@ -114,8 +118,11 @@ public final class STBController {
 		//Perform file sync
 		List<String> fileListOnDHT = fileDHTService.getFileList(node);
 		
+		//Get all files in STB share folder. Check if files in fileList are present there.
 		fileDHTService.syncFilesWithDHT(node,fileListOnDHT,new File(root));
 		
-		//Get all files in STB share folder. Check if files in fileList are present there.
+		
+		fileDHTService.startObserver(node,new File(root));
+		
 	}
 }
