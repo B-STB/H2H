@@ -7,9 +7,9 @@
     <property name="dir.workspace" value=".."/>
     <property name="dir.jarfile" value="${dir.buildfile}/h2h"/>
     <target name="create_run_jar">
-        <jar destfile="${dir.jarfile}/h2h.jar">
+        <jar destfile="${dir.jarfile}/stbcontroller.jar">
             <manifest>
-                <attribute name="Main-Class" value="com.h2h.dht.util.ScannerUtil"/>
+                <attribute name="Main-Class" value="org.stb.main.Main"/>
             </manifest>
             <fileset dir="bin"/>
         </jar>
