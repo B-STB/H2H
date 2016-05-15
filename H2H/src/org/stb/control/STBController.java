@@ -1,5 +1,6 @@
 package org.stb.control;
 
+import java.io.File;
 import java.util.List;
 
 import org.hive2hive.core.api.interfaces.IH2HNode;
@@ -88,7 +89,7 @@ public final class STBController {
 		String userId = PropertyReader.getValue("stb.username");
 		char[] password = PropertyReader.getValue("stb.password").toCharArray();
 		String pin = PropertyReader.getValue("stb.pin");
-
+		String root = PropertyReader.getValue("stb.shareFolder");
 		UserCredential userCredential = new UserCredential(userId,password,pin);
 		//Get from stb.properties
 		
@@ -111,7 +112,9 @@ public final class STBController {
 		
 		
 		//Perform file sync
-		List<String> fileList = fileDHTService.getFileList();
+		List<String> fileListOnDHT = fileDHTService.getFileList(node);
+		
+		fileDHTService.syncFilesWithDHT(fileListOnDHT,new File(root));
 		
 		//Get all files in STB share folder. Check if files in fileList are present there.
 	}
