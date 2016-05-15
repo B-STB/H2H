@@ -18,6 +18,7 @@ import org.stb.vo.UserCredential;
 
 /**
  * The Class STBController.
+ * @author aneesh.n
  */
 public final class STBController {
 
@@ -36,9 +37,8 @@ public final class STBController {
 	/** The login service. */
 	private final LoginService loginService;
 	
+	/** The register service. */
 	private final CredentialRegisterService registerService;
-	
-	private final PropertyReader propertyReader;
 	
 	/**
 	 * Instantiates a new STB controller.
@@ -48,7 +48,6 @@ public final class STBController {
 		loginService = new LoginServiceImpl();
 		fileDHTService = new FileDHTServiceImpl();
 		registerService = new CredentialRegisterServiceImpl();
-		propertyReader= PropertyReader.getInstance();
 	}
 
 	/**
@@ -62,7 +61,8 @@ public final class STBController {
 
 	/**
 	 * Start.
-	 * @throws Exception 
+	 *
+	 * @throws Exception the exception
 	 */
 	public void start() throws Exception {
 		//Run discovery
@@ -85,9 +85,9 @@ public final class STBController {
 		
 		
 		
-		String userId = propertyReader.getValue("stb.username");
-		String password = propertyReader.getValue("stb.password");
-		String pin = propertyReader.getValue("stb.pin");
+		String userId = PropertyReader.getValue("stb.username");
+		String password = PropertyReader.getValue("stb.password");
+		String pin = PropertyReader.getValue("stb.pin");
 
 		UserCredential userCredential = new UserCredential(userId,password,pin);
 		//Get from stb.properties

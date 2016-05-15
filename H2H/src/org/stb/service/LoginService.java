@@ -8,20 +8,29 @@ import org.stb.vo.UserCredential;
 
 /**
  * The Interface LoginService.
+ * 
+ * @author aneesh.n
  */
 public interface LoginService {
 
 	/**
 	 * Login to dht.
 	 *
-	 * @param node the node
-	 * @param userCredential the user credential
+	 * @param node
+	 *            the node
+	 * @param userCredential
+	 *            the user credential
 	 * @return true, if successful
-	 * @throws InvalidProcessStateException the invalid process state exception
-	 * @throws ProcessExecutionException the process execution exception
-	 * @throws NoPeerConnectionException the no peer connection exception
-	 * @throws Exception the exception
+	 * @throws InvalidProcessStateException
+	 *             the invalid process state exception
+	 * @throws ProcessExecutionException
+	 *             the process execution exception
+	 * @throws NoPeerConnectionException
+	 *             the no peer connection exception
+	 * @throws Exception
+	 *             the exception
 	 */
-	boolean loginToDHT(IH2HNode node, UserCredential userCredential) throws InvalidProcessStateException, ProcessExecutionException, NoPeerConnectionException, Exception;
-	
+	boolean loginToDHT(IH2HNode node, UserCredential userCredential)
+			throws InvalidProcessStateException, ProcessExecutionException, NoPeerConnectionException, Exception;
+
 }

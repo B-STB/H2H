@@ -7,10 +7,12 @@ import org.stb.vo.UserCredential;
 
 /**
  * The Interface CredentialRegisterService.
+ * 
+ * @author aneesh.n
  */
 public interface CredentialRegisterService {
 
+	boolean registerCredential(IH2HNode node, UserCredential userCredential)
+			throws NoPeerConnectionException, InvalidProcessStateException;
 
-	boolean registerCredential(IH2HNode node, UserCredential userCredential) throws NoPeerConnectionException, InvalidProcessStateException;
-	
 }

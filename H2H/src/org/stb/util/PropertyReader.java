@@ -3,37 +3,38 @@
  */
 package org.stb.util;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * @author Ajitesh.k
+ * The Class PropertyReader.
  *
+ * @author Ajitesh.k
  */
-public class PropertyReader {
+public final class PropertyReader {
 
-	private static PropertyReader instance = null;
+	/** The props. */
+	private static Properties props = null;
 
-	private Properties props = null;
-
+	/**
+	 * Instantiates a new property reader.
+	 */
 	private PropertyReader() {
-		try (InputStream input = new FileInputStream("stb.properties")) {
+		try (InputStream input = PropertyReader.class.getResourceAsStream("stb.properties")) {
 			props.load(input);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
 
-	public static synchronized PropertyReader getInstance() {
-		if (instance == null)
-			instance = new PropertyReader();
-		return instance;
+	/**
+	 * Gets the value.
+	 *
+	 * @param key the prop key
+	 * @return the value
+	 */
+	public static String getValue(String key) {
+		return props.getProperty(key);
 	}
-
-	public String getValue(String propKey) {
-		return this.props.getProperty(propKey);
-	}
-
 }
