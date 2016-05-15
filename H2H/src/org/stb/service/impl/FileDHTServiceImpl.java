@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hive2hive.client.util.FileObserver;
+import org.hive2hive.client.util.FileObserverListener;
 import org.hive2hive.core.api.interfaces.IH2HNode;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
@@ -44,8 +46,13 @@ public class FileDHTServiceImpl implements FileDHTService {
 	}
 
 	@Override
-	public void startObserver() {
-		// TODO Auto-generated method stub
+	public void startObserver(IH2HNode node,File root) throws Exception {
+		//TODO get root and Interval from props
+		FileObserver fileObserver = new FileObserver(root, new Long("1000000"));
+		FileObserverListener listener = new FileObserverListener(node.getFileManager());
+		fileObserver.addFileObserverListener(listener);
+
+		fileObserver.start();
 
 	}
 
@@ -123,4 +130,5 @@ public class FileDHTServiceImpl implements FileDHTService {
 
 		}
 	}
+
 }

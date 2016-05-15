@@ -45,28 +45,23 @@ public interface FileDHTService {
 	 */
 	void downloadFile(String fileName);
 
-	/**
-	 * Start observer.
-	 */
-	void startObserver();
 
 	/**
 	 * Stop observer.
 	 */
 	void stopObserver();
 	
+
 	/**
-	 * Sync files with dht.
+	 * Start observer.
 	 *
 	 * @param node the node
-	 * @param fileList the file list
-	 * @param file the file
-	 * @throws IllegalArgumentException 
-	 * @throws NoSessionException 
-	 * @throws NoPeerConnectionException 
-	 * @throws ProcessExecutionException 
-	 * @throws InvalidProcessStateException 
+	 * @param root the root
+	 * @throws Exception the exception
 	 */
-	void syncFilesWithDHT(IH2HNode node,List<String> fileList, File file) throws NoPeerConnectionException, NoSessionException, IllegalArgumentException, InvalidProcessStateException, ProcessExecutionException;
+	void startObserver(IH2HNode node, File root) throws Exception;
+
+	void syncFilesWithDHT(IH2HNode node, List<String> fileListOnDHT, File file) throws NoPeerConnectionException,
+			NoSessionException, IllegalArgumentException, InvalidProcessStateException, ProcessExecutionException;
 
 }
