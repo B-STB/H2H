@@ -5,7 +5,7 @@ import org.stb.service.DiscoveryService;
 public class DiscoveryServiceImpl implements DiscoveryService {
 
 	@Override
-	public boolean connectToDataCenters(String... dataCentersIps) {
+	public boolean connectToBootstrapNodes(String... bootstrapIps) {
 		// TODO Auto-generated method stub
 		return false;
 	}
