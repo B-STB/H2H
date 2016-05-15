@@ -26,7 +26,7 @@ public final class FileUtils {
 		return filesInSTBDirectory;
 	}
 	
-	public static List<String> displayDirectoryContents(File dir) {
+	private static List<String> displayDirectoryContents(File dir) {
 		List<String> filesInSTBDirectory= new ArrayList<>();
 		try {
 			File[] files = dir.listFiles();
