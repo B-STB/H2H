@@ -3,9 +3,9 @@ package org.stb.main;
 import org.stb.control.STBController;
 
 /**
- * The Class StartUp.
+ * The Class Main.
  */
-public class StartUp {
+public class Main {
 
 	/**
 	 * The main method.
