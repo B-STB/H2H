@@ -22,6 +22,7 @@ import org.stb.vo.UserCredential;
 
 /**
  * The Class STBController.
+ * 
  * @author aneesh.n
  */
 public final class STBController {
@@ -32,22 +33,30 @@ public final class STBController {
 	/** The Constant INSTANCE. */
 	private static final STBController INSTANCE = new STBController();
 
+	/** The Constant BOOTSTRAP_IDS. */
 	private static final String BOOTSTRAP_IDS = "bootstrap.ips";
 
 	/** The discovery service. */
 	private final DiscoveryService discoveryService;
-	
+
 	/** The file dht service. */
 	private final FileDHTService fileDHTService;
-	
+
 	/** The login service. */
 	private final LoginService loginService;
-	
+
 	/** The register service. */
 	private final CredentialRegisterService registerService;
-	
+
+	/** The shut down service. */
 	private final ShutDownService shutDownService;
-	
+
+	/** The connected node. */
+	private IH2HNode connectedNode = null;
+
+	/** The observer. */
+	private FileObserver observer;
+
 	/**
 	 * Instantiates a new STB controller.
 	 */
@@ -71,15 +80,16 @@ public final class STBController {
 	/**
 	 * Start.
 	 *
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	public void start() throws Exception {
-		//Run discovery
-		//Get bootstrap node ips from properties file.
+		// Run discovery
+		// Get bootstrap node ips from properties file.
 		String bootstrapNodeIps = PropertyReader.getValue(BOOTSTRAP_IDS);
-		IH2HNode connectedNode = discoveryService.connectToBootstrapNodes(bootstrapNodeIps);
-		
-		//Read from properties file
+		connectedNode = discoveryService.connectToBootstrapNodes(bootstrapNodeIps);
+
+		// Read from properties file
 		boolean isBootstrapNode = true;
 		if (connectedNode == null) {
 			if (isBootstrapNode) {
@@ -90,44 +100,44 @@ public final class STBController {
 				System.out.println(message);
 				return;
 			}
-		} 
-		
-		
-		
+		}
+
 		String userId = PropertyReader.getValue("stb.username");
 		char[] password = PropertyReader.getValue("stb.password").toCharArray();
 		String pin = PropertyReader.getValue("stb.pin");
 		String root = PropertyReader.getValue("stb.shareFolder");
-		UserCredential userCredential = new UserCredential(userId,password,pin);
-		//Get from stb.properties
-		
-	
-		
-		boolean isRegistered =registerService.registerCredential(connectedNode,userCredential);
-		
-		if(isRegistered){
-			loginService.loginToDHT(connectedNode,userCredential);
-		}else{
+		UserCredential userCredential = new UserCredential(userId, password, pin);
+		// Get from stb.properties
+
+		// Register to DHT network
+		boolean isRegistered = registerService.registerCredential(connectedNode, userCredential);
+
+		// Login to DHT network
+		if (isRegistered) {
+			loginService.loginToDHT(connectedNode, userCredential);
+		} else {
 			String message = "Couldnt Login as the User is not yet registered";
 			LOGGER.error(message);
 			System.out.println(message);
 			return;
 		}
-		//Login to DHT network
-		
-		
-		//Perform file sync
+
+		// Perform file sync
 		List<String> fileListOnDHT = fileDHTService.getFileList(connectedNode);
-		
-		//Get all files in STB share folder. Check if files in fileList are present there.
-		fileDHTService.syncFilesWithDHT(connectedNode,fileListOnDHT,new File(root));
-		
-		
-		fileDHTService.startObserver(connectedNode,new File(root));
-		
+
+		// Get all files in STB share folder. Check if files in fileList are
+		// present there.
+		fileDHTService.syncFilesWithDHT(connectedNode, fileListOnDHT, new File(root));
+
+		observer = fileDHTService.startObserver(connectedNode, new File(root));
 	}
-	
-	public void stop(IH2HNode node,FileObserver fileObserver) throws Exception {
-		shutDownService.stop(node,fileObserver);
+
+	/**
+	 * Stop.
+	 *
+	 * @throws Exception the exception
+	 */
+	public void stop() throws Exception {
+		shutDownService.stop(connectedNode, observer);
 	}
 }

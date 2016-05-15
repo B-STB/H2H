@@ -46,20 +46,19 @@ public class FileDHTServiceImpl implements FileDHTService {
 	}
 
 	@Override
-	public void startObserver(IH2HNode node,File root) throws Exception {
+	public FileObserver startObserver(IH2HNode node,File root) throws Exception {
 		//TODO get root and Interval from props
 		FileObserver fileObserver = new FileObserver(root, new Long("1000000"));
 		FileObserverListener listener = new FileObserverListener(node.getFileManager());
 		fileObserver.addFileObserverListener(listener);
 
 		fileObserver.start();
-
+		return fileObserver;
 	}
 
 	@Override
-	public void stopObserver() {
-		// TODO Auto-generated method stub
-
+	public void stopObserver(FileObserver fileObserver) throws Exception {
+		fileObserver.stop();
 	}
 
 	private List<String> printRecursively(FileNode node, int level) {

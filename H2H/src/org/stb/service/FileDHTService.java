@@ -3,6 +3,7 @@ package org.stb.service;
 import java.io.File;
 import java.util.List;
 
+import org.hive2hive.client.util.FileObserver;
 import org.hive2hive.core.api.interfaces.IH2HNode;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.core.exceptions.NoSessionException;
@@ -45,21 +46,17 @@ public interface FileDHTService {
 	 */
 	void downloadFile(String fileName);
 
-
-	/**
-	 * Stop observer.
-	 */
-	void stopObserver();
-	
-
 	/**
 	 * Start observer.
 	 *
 	 * @param node the node
 	 * @param root the root
+	 * @return 
 	 * @throws Exception the exception
 	 */
-	void startObserver(IH2HNode node, File root) throws Exception;
+	FileObserver startObserver(IH2HNode node, File root) throws Exception;
+	
+	void stopObserver(FileObserver fileObserver) throws Exception;
 
 	void syncFilesWithDHT(IH2HNode node, List<String> fileListOnDHT, File file) throws NoPeerConnectionException,
 			NoSessionException, IllegalArgumentException, InvalidProcessStateException, ProcessExecutionException;
