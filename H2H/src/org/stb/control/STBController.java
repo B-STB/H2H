@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.List;
 
 import org.hive2hive.core.api.interfaces.IH2HNode;
-import org.hive2hive.core.api.interfaces.IUserManager;
-import org.hive2hive.core.security.UserCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stb.service.CredentialRegisterService;
@@ -99,13 +97,10 @@ public final class STBController {
 		
 	
 		
-		// TODO Node should be the return type of connect or join network
-		IH2HNode node = null;
-		
-		boolean isRegistered =registerService.registerCredential(node,userCredential);
+		boolean isRegistered =registerService.registerCredential(connectedNode,userCredential);
 		
 		if(isRegistered){
-			loginService.loginToDHT(node,userCredential);
+			loginService.loginToDHT(connectedNode,userCredential);
 		}else{
 			String message = "Couldnt Login as the User is not yet registered";
 			LOGGER.error(message);
@@ -116,13 +111,13 @@ public final class STBController {
 		
 		
 		//Perform file sync
-		List<String> fileListOnDHT = fileDHTService.getFileList(node);
+		List<String> fileListOnDHT = fileDHTService.getFileList(connectedNode);
 		
 		//Get all files in STB share folder. Check if files in fileList are present there.
-		fileDHTService.syncFilesWithDHT(node,fileListOnDHT,new File(root));
+		fileDHTService.syncFilesWithDHT(connectedNode,fileListOnDHT,new File(root));
 		
 		
-		fileDHTService.startObserver(node,new File(root));
+		fileDHTService.startObserver(connectedNode,new File(root));
 		
 	}
 }
