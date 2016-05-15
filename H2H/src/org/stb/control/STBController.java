@@ -3,6 +3,7 @@ package org.stb.control;
 import java.io.File;
 import java.util.List;
 
+import org.hive2hive.client.util.FileObserver;
 import org.hive2hive.core.api.interfaces.IH2HNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +11,12 @@ import org.stb.service.CredentialRegisterService;
 import org.stb.service.DiscoveryService;
 import org.stb.service.FileDHTService;
 import org.stb.service.LoginService;
+import org.stb.service.ShutDownService;
 import org.stb.service.impl.CredentialRegisterServiceImpl;
 import org.stb.service.impl.DiscoveryServiceImpl;
 import org.stb.service.impl.FileDHTServiceImpl;
 import org.stb.service.impl.LoginServiceImpl;
+import org.stb.service.impl.ShutDownServiceImpl;
 import org.stb.util.PropertyReader;
 import org.stb.vo.UserCredential;
 
@@ -43,6 +46,8 @@ public final class STBController {
 	/** The register service. */
 	private final CredentialRegisterService registerService;
 	
+	private final ShutDownService shutDownService;
+	
 	/**
 	 * Instantiates a new STB controller.
 	 */
@@ -51,6 +56,7 @@ public final class STBController {
 		loginService = new LoginServiceImpl();
 		fileDHTService = new FileDHTServiceImpl();
 		registerService = new CredentialRegisterServiceImpl();
+		shutDownService = new ShutDownServiceImpl();
 	}
 
 	/**
@@ -121,7 +127,7 @@ public final class STBController {
 		
 	}
 	
-	public void stop() throws Exception {
-		// TODO
+	public void stop(IH2HNode node,FileObserver fileObserver) throws Exception {
+		shutDownService.stop(node,fileObserver);
 	}
 }
