@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/bcprov-jdk15on-1.51.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/config-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/el-api-2.2.jar"/>
@@ -30,5 +29,6 @@
 	<classpathentry kind="lib" path="lib/tomp2p-social-5.0-Beta9-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/tomp2p-storage-5.0-Beta9-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/tomp2p-tracker-5.0-Beta9-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/bcprov-jdk15on-154.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
