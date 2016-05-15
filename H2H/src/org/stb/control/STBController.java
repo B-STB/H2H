@@ -65,7 +65,7 @@ public final class STBController {
 		//Run discovery
 		//Get data center ips from properties file.
 		String dataCentersIps = null;
-		boolean connectToDataCenters = discoveryService.connectToDataCenters(dataCentersIps);
+		boolean connectToDataCenters = discoveryService.connectToBootstrapNodes(dataCentersIps);
 		
 		//Read from properties file
 		boolean isDataCenter = true;
