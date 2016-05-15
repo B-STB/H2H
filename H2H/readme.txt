@@ -4,7 +4,7 @@ Navigate inside the folder h2h.
 
 Run the application by using-
 
-java -cp "./h2h.jar;./logback.xml;./lib/*" org.stb.main.StartUp
+java -cp "./lib/org.hive2hive.client-1.2.3-SNAPSHOT.jar;./lib/logback.xml;./lib/*" org.hive2hive.client.ConsoleClient
 
 Unix-
-java -cp "./h2h.jar:./logback.xml:./lib/*" org.stb.main.StartUp
+java -cp "./lib/org.hive2hive.client-1.2.3-SNAPSHOT.jar:./lib/logback.xml:./lib/*" org.hive2hive.client.ConsoleClient
