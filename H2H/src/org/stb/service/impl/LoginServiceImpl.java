@@ -13,6 +13,7 @@ import org.hive2hive.processframework.interfaces.IProcessComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stb.service.LoginService;
+import org.stb.vo.UserCredential;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -27,7 +28,7 @@ public class LoginServiceImpl implements LoginService {
 	 * @see org.stb.service.LoginService#loginToDHT(org.hive2hive.core.api.interfaces.IH2HNode, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean loginToDHT(IH2HNode node, String userId, String password, String pin)
+	public boolean loginToDHT(IH2HNode node, UserCredential credentials)
 			throws Exception {
 
 		IUserManager userManager = node.getUserManager();
@@ -40,7 +41,8 @@ public class LoginServiceImpl implements LoginService {
 
 		ConsoleFileAgent fileAgent = new ConsoleFileAgent(root);
 		
-		UserCredentials userCredentials = new UserCredentials(userId,password,pin);
+		UserCredentials userCredentials = new UserCredentials(credentials.getUserName(),credentials.getPassword(),
+				credentials.getPin());
 		IProcessComponent<Void> loginProcess = userManager.createLoginProcess(userCredentials, fileAgent);
 		try {
 			loginProcess.execute();

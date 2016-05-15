@@ -3,8 +3,6 @@ package org.stb.control;
 import java.util.List;
 
 import org.hive2hive.core.api.interfaces.IH2HNode;
-import org.hive2hive.core.api.interfaces.IUserManager;
-import org.hive2hive.core.security.UserCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stb.service.CredentialRegisterService;
@@ -15,6 +13,8 @@ import org.stb.service.impl.CredentialRegisterServiceImpl;
 import org.stb.service.impl.DiscoveryServiceImpl;
 import org.stb.service.impl.FileDHTServiceImpl;
 import org.stb.service.impl.LoginServiceImpl;
+import org.stb.util.PropertyReader;
+import org.stb.vo.UserCredential;
 
 /**
  * The Class STBController.
@@ -38,6 +38,8 @@ public final class STBController {
 	
 	private final CredentialRegisterService registerService;
 	
+	private final PropertyReader propertyReader;
+	
 	/**
 	 * Instantiates a new STB controller.
 	 */
@@ -46,6 +48,7 @@ public final class STBController {
 		loginService = new LoginServiceImpl();
 		fileDHTService = new FileDHTServiceImpl();
 		registerService = new CredentialRegisterServiceImpl();
+		propertyReader= PropertyReader.getInstance();
 	}
 
 	/**
@@ -80,21 +83,24 @@ public final class STBController {
 			}
 		} 
 		
+		
+		
+		String userId = propertyReader.getValue("stb.username");
+		String password = propertyReader.getValue("stb.password");
+		String pin = propertyReader.getValue("stb.pin");
+
+		UserCredential userCredential = new UserCredential(userId,password,pin);
 		//Get from stb.properties
-		String userId = null;
-		// TODO later use encryption for password in the properties file. Do
-		// decryption before passing to method.
-		byte[] password = null;
-		String pin = null;
+		
 		
 		
 		// TODO Node should be the return type of connect or join network
 		IH2HNode node = null;
 		
-		boolean isRegistered =registerService.registerCredential(node,userId, new String(password), pin );
+		boolean isRegistered =registerService.registerCredential(node,userCredential);
 		
 		if(isRegistered){
-			loginService.loginToDHT(node,userId, new String(password), pin );
+			loginService.loginToDHT(node,userCredential);
 		}else{
 			String message = "Couldnt Login as the User is not yet registered";
 			LOGGER.error(message);

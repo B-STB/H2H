@@ -10,6 +10,7 @@ import org.hive2hive.processframework.interfaces.IProcessComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stb.service.CredentialRegisterService;
+import org.stb.vo.UserCredential;
 
 public class CredentialRegisterServiceImpl implements CredentialRegisterService {
 
@@ -17,12 +18,13 @@ public class CredentialRegisterServiceImpl implements CredentialRegisterService 
 
 
 	@Override
-	public boolean registerCredential(IH2HNode node, String userId, String password, String pin) throws NoPeerConnectionException, InvalidProcessStateException {
+	public boolean registerCredential(IH2HNode node,UserCredential credentials) throws NoPeerConnectionException, InvalidProcessStateException {
 
 		IUserManager userManager = node.getUserManager();
-		UserCredentials userCredentials = new UserCredentials(userId,password,pin);
-		if (!userManager.isRegistered(userId)) {
-			LOGGER.info("User - {} is not Registered", userId);
+		UserCredentials userCredentials = new UserCredentials(credentials.getUserName(),credentials.getPassword(),
+				credentials.getPin());
+		if (!userManager.isRegistered(userCredentials.getUserId())) {
+			LOGGER.info("User - {} is not Registered", userCredentials.getUserId());
 			IProcessComponent<Void> registerProcess = userManager.createRegisterProcess(userCredentials);
 			try {
 				registerProcess.execute();
