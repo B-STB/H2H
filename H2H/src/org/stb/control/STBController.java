@@ -63,17 +63,17 @@ public final class STBController {
 	 */
 	public void start() throws Exception {
 		//Run discovery
-		//Get data center ips from properties file.
-		String dataCentersIps = null;
-		boolean connectToDataCenters = discoveryService.connectToBootstrapNodes(dataCentersIps);
+		//Get bootstrap node ips from properties file.
+		String bootstrapNodeIps = null;
+		boolean connectToBoostrapNodes = discoveryService.connectToBootstrapNodes(bootstrapNodeIps);
 		
 		//Read from properties file
-		boolean isDataCenter = true;
-		if (!connectToDataCenters) {
-			if (isDataCenter) {
+		boolean isBootstrapNode = true;
+		if (!connectToBoostrapNodes) {
+			if (isBootstrapNode) {
 				discoveryService.startDHTNetwork();
 			} else {
-				String message = "Could not connect to DHT network as all DataCenters are down.";
+				String message = "Could not connect to DHT network as all Bootstrap nodes are down.";
 				LOGGER.error(message);
 				System.out.println(message);
 				return;
