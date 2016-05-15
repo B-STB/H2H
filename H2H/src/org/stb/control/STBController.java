@@ -87,23 +87,19 @@ public final class STBController {
 		byte[] password = null;
 		String pin = null;
 		
-		UserCredentials userCredentials= new UserCredentials(userId, new String(password), pin);
-		
-		if(userCredentials.getUserId() ==null){
-			throw new Exception("No user credentials specified");
-		}
 		
 		// TODO Node should be the return type of connect or join network
 		IH2HNode node = null;
-		IUserManager userManager = node.getUserManager();
-		if(userCredentials.getUserId() ==null){
-			throw new Exception("User Manager cannot be Null");
-		}
 		
-		boolean isRegistered =registerService.registerCredential(node,userManager, userCredentials);
+		boolean isRegistered =registerService.registerCredential(node,userId, new String(password), pin );
 		
 		if(isRegistered){
-			loginService.loginToDHT(userManager,userCredentials);
+			loginService.loginToDHT(node,userId, new String(password), pin );
+		}else{
+			String message = "Couldnt Login as the User is not yet registered";
+			LOGGER.error(message);
+			System.out.println(message);
+			return;
 		}
 		//Login to DHT network
 		

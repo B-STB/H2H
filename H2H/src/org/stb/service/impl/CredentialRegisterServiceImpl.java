@@ -13,14 +13,16 @@ import org.stb.service.CredentialRegisterService;
 
 public class CredentialRegisterServiceImpl implements CredentialRegisterService {
 
-	Logger logger = LoggerFactory.getLogger(CredentialRegisterServiceImpl.class);
+	Logger LOGGER = LoggerFactory.getLogger(CredentialRegisterServiceImpl.class);
+
 
 	@Override
-	public boolean registerCredential(IH2HNode node,IUserManager userManager,UserCredentials userCredentials) throws NoPeerConnectionException, InvalidProcessStateException {
+	public boolean registerCredential(IH2HNode node, String userId, String password, String pin) throws NoPeerConnectionException, InvalidProcessStateException {
 
-
-		if (!userManager.isRegistered(userCredentials.getUserId())) {
-			logger.info("User - {} is not Registered", userCredentials.getUserId());
+		IUserManager userManager = node.getUserManager();
+		UserCredentials userCredentials = new UserCredentials(userId,password,pin);
+		if (!userManager.isRegistered(userId)) {
+			LOGGER.info("User - {} is not Registered", userId);
 			IProcessComponent<Void> registerProcess = userManager.createRegisterProcess(userCredentials);
 			try {
 				registerProcess.execute();
@@ -29,10 +31,9 @@ public class CredentialRegisterServiceImpl implements CredentialRegisterService 
 				return false;
 			}
 		} else {
-			logger.info("User - {} is Already Registered", userCredentials.getUserId());
+			LOGGER.info("User - {} is Already Registered", userCredentials.getUserId());
 		}
 		return false;
-
 	}
 
 }
