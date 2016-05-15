@@ -61,7 +61,12 @@ public interface FileDHTService {
 	 * @param node the node
 	 * @param fileList the file list
 	 * @param file the file
+	 * @throws IllegalArgumentException 
+	 * @throws NoSessionException 
+	 * @throws NoPeerConnectionException 
+	 * @throws ProcessExecutionException 
+	 * @throws InvalidProcessStateException 
 	 */
-	void syncFilesWithDHT(IH2HNode node,List<String> fileList, File file);
+	void syncFilesWithDHT(IH2HNode node,List<String> fileList, File file) throws NoPeerConnectionException, NoSessionException, IllegalArgumentException, InvalidProcessStateException, ProcessExecutionException;
 
 }
