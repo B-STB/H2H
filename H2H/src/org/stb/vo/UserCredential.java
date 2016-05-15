@@ -3,7 +3,6 @@
  */
 package org.stb.vo;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class UserCredential.
  *
@@ -16,7 +15,7 @@ public class UserCredential {
 	private String userName;
 
 	/** The password. */
-	private String password;
+	private char[] password;
 
 	/** The pin. */
 	private String pin;
@@ -30,7 +29,7 @@ public class UserCredential {
 	 * @param password the password
 	 * @param pin the pin
 	 */
-	public UserCredential(String userName, String password, String pin) {
+	public UserCredential(String userName, char[] password, String pin) {
 		super();
 		this.userName = userName;
 		this.password = password;
@@ -61,7 +60,7 @@ public class UserCredential {
 	 *
 	 * @return the password
 	 */
-	public String getPassword() {
+	public char[] getPassword() {
 		return password;
 	}
 
@@ -71,7 +70,7 @@ public class UserCredential {
 	 * @param password
 	 *            the new password
 	 */
-	public void setPassword(String password) {
+	public void setPassword(char[] password) {
 		this.password = password;
 	}
 

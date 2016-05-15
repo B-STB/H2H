@@ -23,26 +23,29 @@ public class LoginServiceImpl implements LoginService {
 
 	/** The logger. */
 	Logger LOGGER = LoggerFactory.getLogger(LoginServiceImpl.class);
-	
-	/* (non-Javadoc)
-	 * @see org.stb.service.LoginService#loginToDHT(org.hive2hive.core.api.interfaces.IH2HNode, java.lang.String, java.lang.String, java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.stb.service.LoginService#loginToDHT(org.hive2hive.core.api.interfaces
+	 * .IH2HNode, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean loginToDHT(IH2HNode node, UserCredential credentials)
-			throws Exception {
+	public boolean loginToDHT(IH2HNode node, UserCredential credentials) throws Exception {
 
 		IUserManager userManager = node.getUserManager();
-		if(userManager == null){
+		if (userManager == null) {
 			throw new Exception("User Manager Cannot be Null");
 		}
-		
-		//TODO need to change this
+
+		// TODO need to change this
 		File root = new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString());
 
 		ConsoleFileAgent fileAgent = new ConsoleFileAgent(root);
-		
-		UserCredentials userCredentials = new UserCredentials(credentials.getUserName(),credentials.getPassword(),
-				credentials.getPin());
+
+		UserCredentials userCredentials = new UserCredentials(credentials.getUserName(),
+				String.valueOf(credentials.getPassword()), credentials.getPin());
 		IProcessComponent<Void> loginProcess = userManager.createLoginProcess(userCredentials, fileAgent);
 		try {
 			loginProcess.execute();

@@ -16,13 +16,13 @@ public class CredentialRegisterServiceImpl implements CredentialRegisterService 
 
 	Logger LOGGER = LoggerFactory.getLogger(CredentialRegisterServiceImpl.class);
 
-
 	@Override
-	public boolean registerCredential(IH2HNode node,UserCredential credentials) throws NoPeerConnectionException, InvalidProcessStateException {
+	public boolean registerCredential(IH2HNode node, UserCredential credentials)
+			throws NoPeerConnectionException, InvalidProcessStateException {
 
 		IUserManager userManager = node.getUserManager();
-		UserCredentials userCredentials = new UserCredentials(credentials.getUserName(),credentials.getPassword(),
-				credentials.getPin());
+		UserCredentials userCredentials = new UserCredentials(credentials.getUserName(),
+				String.valueOf(credentials.getPassword()), credentials.getPin());
 		if (!userManager.isRegistered(userCredentials.getUserId())) {
 			LOGGER.info("User - {} is not Registered", userCredentials.getUserId());
 			IProcessComponent<Void> registerProcess = userManager.createRegisterProcess(userCredentials);

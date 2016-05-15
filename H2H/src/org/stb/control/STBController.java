@@ -86,7 +86,7 @@ public final class STBController {
 		
 		
 		String userId = PropertyReader.getValue("stb.username");
-		String password = PropertyReader.getValue("stb.password");
+		char[] password = PropertyReader.getValue("stb.password").toCharArray();
 		String pin = PropertyReader.getValue("stb.pin");
 
 		UserCredential userCredential = new UserCredential(userId,password,pin);
