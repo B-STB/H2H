@@ -146,11 +146,11 @@ public class Main {
 
 					System.out.println(kind.name() + ": " + fileName);
 
-					if (kind == ENTRY_MODIFY && !fileName.toString().equals(STB_STATUS)) {
+					if (kind == ENTRY_MODIFY && fileName.toString().equals(STB_STATUS)) {
 						LOGGER.info("STB status file has changed! STB will be stopped.");
 						STBController.getInstance().stop();
 						break;
-					} else if (kind == ENTRY_DELETE) {
+					} else if (kind == ENTRY_DELETE && fileName.toString().equals(STB_STATUS)) {
 						LOGGER.info("STB status file has been deleted! STB will be stopped.");
 						STBController.getInstance().stop();
 						break;
