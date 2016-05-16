@@ -16,21 +16,16 @@ public interface LoginService {
 	/**
 	 * Login to dht.
 	 *
-	 * @param node
-	 *            the node
-	 * @param userCredential
-	 *            the user credential
+	 * @param node            the node
+	 * @param userCredential            the user credential
+	 * @param root the root
 	 * @return true, if successful
-	 * @throws InvalidProcessStateException
-	 *             the invalid process state exception
-	 * @throws ProcessExecutionException
-	 *             the process execution exception
-	 * @throws NoPeerConnectionException
-	 *             the no peer connection exception
-	 * @throws Exception
-	 *             the exception
+	 * @throws InvalidProcessStateException             the invalid process state exception
+	 * @throws ProcessExecutionException             the process execution exception
+	 * @throws NoPeerConnectionException             the no peer connection exception
+	 * @throws Exception             the exception
 	 */
-	boolean loginToDHT(IH2HNode node, UserCredential userCredential)
+	boolean loginToDHT(IH2HNode node, UserCredential userCredential, String root)
 			throws InvalidProcessStateException, ProcessExecutionException, NoPeerConnectionException, Exception;
 
 }

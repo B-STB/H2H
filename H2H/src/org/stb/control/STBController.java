@@ -122,7 +122,7 @@ public final class STBController {
 
 		// Login to DHT network
 		if (isRegistered) {
-			loginService.loginToDHT(connectedNode, userCredential);
+			loginService.loginToDHT(connectedNode, userCredential, root);
 		} else {
 			String message = "Couldnt Login as the User is not yet registered";
 			LOGGER.error(message);
