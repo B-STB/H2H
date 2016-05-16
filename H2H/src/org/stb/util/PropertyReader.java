@@ -15,13 +15,17 @@ import java.util.Properties;
 public final class PropertyReader {
 
 	/** The props. */
-	private static Properties props = null;
+	private static Properties props = new Properties();
 
 	/**
 	 * Instantiates a new property reader.
 	 */
 	private PropertyReader() {
-		try (InputStream input = PropertyReader.class.getResourceAsStream("stb.properties")) {
+		
+	}
+	
+	static {
+		try (InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("stb.properties")) {
 			props.load(input);
 		} catch (IOException ex) {
 			ex.printStackTrace();

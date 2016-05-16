@@ -53,6 +53,7 @@ public class FileDHTServiceImpl implements FileDHTService {
 		fileObserver.addFileObserverListener(listener);
 
 		fileObserver.start();
+		LOGGER.info("Observer started for: {}", root);
 		return fileObserver;
 	}
 

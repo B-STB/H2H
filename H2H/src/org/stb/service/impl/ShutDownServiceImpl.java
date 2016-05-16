@@ -23,6 +23,7 @@ public class ShutDownServiceImpl implements ShutDownService {
 		if (node != null && node.isConnected()) {
 			LOGGER.info("Disconnecting from the network...");
 			node.disconnect();
+			node.getPeer().shutdown();
 		}else{
 			LOGGER.info("Node was already disconnected");
 		}
@@ -33,6 +34,8 @@ public class ShutDownServiceImpl implements ShutDownService {
 				fileObserver.stop();
 			} catch (Exception e) {
 				LOGGER.error("Cannot Gracefully Shutdown the STB");
+			} finally {
+				//System.exit(0);
 			}
 		}else{
 			LOGGER.info("File Observer was Not Running");

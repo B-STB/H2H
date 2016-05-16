@@ -1,5 +1,9 @@
 package org.stb.main;
 
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
@@ -12,9 +16,6 @@ import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,8 @@ public class Main {
 
 	/** The Constant STB_STATUS. */
 	private static final String STB_STATUS = "stb.status";
-	
+	private static final String LOCK_DIR = "lock";
+
 	/** The Constant STB_LOCK. */
 	private static final String STB_LOCK = "stb.lock";
 	/** The Constant LOGGER. */
@@ -38,8 +40,10 @@ public class Main {
 	/**
 	 * The main method.
 	 *
-	 * @param args            the arguments
-	 * @throws Exception the exception
+	 * @param args
+	 *            the arguments
+	 * @throws Exception
+	 *             the exception
 	 */
 	public static void main(String[] args) throws Exception {
 		lockAndLoad();
@@ -50,22 +54,29 @@ public class Main {
 	 */
 	private static void lockAndLoad() {
 		// Get a file channel for the file
-		Path lockFilePath = Paths.get(STB_LOCK);
-		Path statusFilePath = Paths.get(STB_STATUS);
-		if (!Files.exists(lockFilePath)) {
-			try {
-				Files.write(lockFilePath, "LOCK".getBytes());
-				Files.write(statusFilePath, "RUNNING".getBytes());
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage(), e);
-				return;
+		Path lockFilePath = Paths.get(LOCK_DIR, STB_LOCK);
+		Path statusFilePath = Paths.get(LOCK_DIR, STB_STATUS);
+		Path lockDirPath = Paths.get(LOCK_DIR);
+		try {
+			Files.deleteIfExists(statusFilePath);
+			if (Files.exists(lockDirPath) && !Files.isDirectory(lockDirPath)) {
+				Files.delete(lockDirPath);
 			}
+			if (Files.notExists(lockDirPath)) {
+				Files.createDirectory(lockDirPath);
+			}
+			if (!Files.exists(lockFilePath)) {
+				Files.write(lockFilePath, "LOCK".getBytes());
+			}
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			return;
 		}
 		FileLock lock = null;
 		try (FileChannel channel = new RandomAccessFile(lockFilePath.toFile(), "rw").getChannel()) {
 			// Use the file channel to create a lock on the file.
 			// This method blocks until it can retrieve the lock.
-			lock = channel.lock();
+			lock = channel.tryLock();
 
 			/*
 			 * use channel.lock OR channel.tryLock();
@@ -73,11 +84,12 @@ public class Main {
 
 			// Try acquiring the lock without blocking. This method returns
 			// null or throws an exception if the file is already locked.
-			lock = channel.tryLock();
+			// lock = channel.tryLock();
 
 			if (lock != null) {
+				Files.write(statusFilePath, "RUNNING".getBytes());
 				STBController.getInstance().start();
-				startShutDownWatcher(statusFilePath);
+				startShutDownWatcher(lockDirPath);
 			} else {
 				LOGGER.error("Could not start service as lock could not be acquired.");
 			}
@@ -96,7 +108,7 @@ public class Main {
 				}
 			}
 			try {
-				Files.deleteIfExists(lockFilePath);
+				Files.deleteIfExists(statusFilePath);
 				Files.deleteIfExists(statusFilePath);
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage(), e);
@@ -107,14 +119,15 @@ public class Main {
 	/**
 	 * Start shut down watcher.
 	 *
-	 * @param statusFilePath the status file path
+	 * @param lockDirPath
+	 *            the status file path
 	 */
-	private static void startShutDownWatcher(Path statusFilePath) {
+	private static void startShutDownWatcher(Path lockDirPath) {
 		try {
 			WatchService watcher = FileSystems.getDefault().newWatchService();
-			statusFilePath.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+			lockDirPath.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 
-			LOGGER.debug("Watch Service registered for dir: " + statusFilePath.getFileName());
+			LOGGER.info("Watch Service to look for graceful shutdown registered for dir: " + lockDirPath.getFileName());
 
 			while (true) {
 				WatchKey key;
@@ -133,7 +146,7 @@ public class Main {
 
 					System.out.println(kind.name() + ": " + fileName);
 
-					if (kind == ENTRY_MODIFY && fileName.toString().equals(STB_STATUS)) {
+					if (kind == ENTRY_MODIFY && !fileName.toString().equals(STB_STATUS)) {
 						LOGGER.info("STB status file has changed! STB will be stopped.");
 						STBController.getInstance().stop();
 						break;

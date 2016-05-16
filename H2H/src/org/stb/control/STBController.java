@@ -86,7 +86,14 @@ public final class STBController {
 	public void start() throws Exception {
 		// Run discovery
 		// Get bootstrap node ips from properties file.
-		String bootstrapNodeIps = PropertyReader.getValue(BOOTSTRAP_IDS);
+		String bootstrapNodeIpsString = PropertyReader.getValue(BOOTSTRAP_IDS);
+		String[] bootstrapNodeIps = null;
+		if (bootstrapNodeIpsString == null || bootstrapNodeIpsString.trim().isEmpty()) {
+			LOGGER.error("No bootstrap node ids found in properties file.");
+			return;
+		} else {
+			bootstrapNodeIps = bootstrapNodeIpsString.split(",");
+		}
 		connectedNode = discoveryService.connectToBootstrapNodes(bootstrapNodeIps);
 
 		// Read from properties file
@@ -101,13 +108,14 @@ public final class STBController {
 				return;
 			}
 		}
+		LOGGER.info("Connected node: {}", connectedNode);
 
+		// Get from stb.properties
 		String userId = PropertyReader.getValue("stb.username");
 		char[] password = PropertyReader.getValue("stb.password").toCharArray();
 		String pin = PropertyReader.getValue("stb.pin");
 		String root = PropertyReader.getValue("stb.shareFolder");
 		UserCredential userCredential = new UserCredential(userId, password, pin);
-		// Get from stb.properties
 
 		// Register to DHT network
 		boolean isRegistered = registerService.registerCredential(connectedNode, userCredential);
@@ -127,7 +135,9 @@ public final class STBController {
 
 		// Get all files in STB share folder. Check if files in fileList are
 		// present there.
-		fileDHTService.syncFilesWithDHT(connectedNode, fileListOnDHT, new File(root));
+		if (fileListOnDHT != null && !fileListOnDHT.isEmpty()) {
+			fileDHTService.syncFilesWithDHT(connectedNode, fileListOnDHT, new File(root));
+		}
 
 		observer = fileDHTService.startObserver(connectedNode, new File(root));
 	}
