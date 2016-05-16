@@ -86,27 +86,27 @@ public final class STBController {
 	public void start() throws Exception {
 		// Run discovery
 		// Get bootstrap node ips from properties file.
-		String bootstrapNodeIpsString = PropertyReader.getValue(BOOTSTRAP_IDS);
-		String[] bootstrapNodeIps = null;
-		if (bootstrapNodeIpsString == null || bootstrapNodeIpsString.trim().isEmpty()) {
-			LOGGER.error("No bootstrap node ids found in properties file.");
-			return;
-		} else {
-			bootstrapNodeIps = bootstrapNodeIpsString.split(",");
-		}
-		connectedNode = discoveryService.connectToBootstrapNodes(bootstrapNodeIps);
-
-		// Read from properties file
-		boolean isBootstrapNode = true;
-		if (connectedNode == null) {
-			if (isBootstrapNode) {
-				connectedNode = discoveryService.startDHTNetwork();
+		boolean isBootstrapNode = Boolean.valueOf(PropertyReader.getValue("stb.isBootstrap"));
+		if (!isBootstrapNode) {
+			String bootstrapNodeIpsString = PropertyReader.getValue(BOOTSTRAP_IDS);
+			String[] bootstrapNodeIps = null;
+			if (bootstrapNodeIpsString == null || bootstrapNodeIpsString.trim().isEmpty()) {
+				LOGGER.error("No bootstrap node ids found in properties file.");
+				return;
 			} else {
+				bootstrapNodeIps = bootstrapNodeIpsString.split(",");
+			}
+			connectedNode = discoveryService.connectToBootstrapNodes(bootstrapNodeIps);
+
+			if (connectedNode == null) {
 				String message = "Could not connect to DHT network as all Bootstrap nodes are down.";
 				LOGGER.error(message);
 				System.out.println(message);
 				return;
 			}
+		} else {
+			LOGGER.info("Could not connect to any bootstrap nodes, starting node: {}", connectedNode);
+			connectedNode = discoveryService.startDHTNetwork();
 		}
 		LOGGER.info("Connected node: {}", connectedNode);
 
@@ -130,13 +130,16 @@ public final class STBController {
 			return;
 		}
 
-		// Perform file sync
+		// get file list from DHT
 		List<String> fileListOnDHT = fileDHTService.getFileList(connectedNode);
 
 		// Get all files in STB share folder. Check if files in fileList are
 		// present there.
+		// Perform file sync
 		if (fileListOnDHT != null && !fileListOnDHT.isEmpty()) {
 			fileDHTService.syncFilesWithDHT(connectedNode, fileListOnDHT, new File(root));
+		} else {
+			LOGGER.info("No files found on DHT.");
 		}
 
 		observer = fileDHTService.startObserver(connectedNode, new File(root));
@@ -145,7 +148,8 @@ public final class STBController {
 	/**
 	 * Stop.
 	 *
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	public void stop() throws Exception {
 		shutDownService.stop(connectedNode, observer);

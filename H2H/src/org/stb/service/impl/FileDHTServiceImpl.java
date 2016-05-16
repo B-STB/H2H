@@ -46,8 +46,8 @@ public class FileDHTServiceImpl implements FileDHTService {
 	}
 
 	@Override
-	public FileObserver startObserver(IH2HNode node,File root) throws Exception {
-		//TODO get root and Interval from props
+	public FileObserver startObserver(IH2HNode node, File root) throws Exception {
+		// TODO get root and Interval from props
 		FileObserver fileObserver = new FileObserver(root, new Long("1000000"));
 		FileObserverListener listener = new FileObserverListener(node.getFileManager());
 		fileObserver.addFileObserverListener(listener);
@@ -93,6 +93,8 @@ public class FileDHTServiceImpl implements FileDHTService {
 	public void syncFilesWithDHT(IH2HNode node, List<String> fileListOnDHT, File file) throws NoPeerConnectionException,
 			NoSessionException, IllegalArgumentException, InvalidProcessStateException, ProcessExecutionException {
 		List<String> filesInSTBList = FileUtils.getListOfFilesInDirectory(file);
+		LOGGER.info("Files on DHT: {}", fileListOnDHT);
+		LOGGER.info("Files in STB: {}", filesInSTBList);
 		Set<String> filesInSTB = new HashSet<>(filesInSTBList);
 
 		List<String> excludedFilesOnSTB = new ArrayList<>();
@@ -111,8 +113,8 @@ public class FileDHTServiceImpl implements FileDHTService {
 
 		}
 		File workingFile;
+		LOGGER.info("Files to download: {}", filesInSTB);
 		if (filesInSTB != null) {
-
 			for (String fileInStb : filesInSTB) {
 				workingFile = new File(file, fileInStb);
 				IProcessComponent<Void> updateFileProcess = node.getFileManager().createDownloadProcess(workingFile);
@@ -120,6 +122,7 @@ public class FileDHTServiceImpl implements FileDHTService {
 			}
 		}
 
+		LOGGER.info("Files to upload: {}", excludedFilesOnSTB);
 		if (excludedFilesOnSTB != null) {
 			for (String fileInStb : excludedFilesOnSTB) {
 				workingFile = new File(file, fileInStb);

@@ -20,6 +20,7 @@ import java.nio.file.WatchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stb.control.STBController;
+import org.stb.util.PropertyReader;
 
 /**
  * The Class Main.
@@ -30,10 +31,13 @@ public class Main {
 
 	/** The Constant STB_STATUS. */
 	private static final String STB_STATUS = "stb.status";
-	private static final String LOCK_DIR = "lock";
+	
+	/** The Constant LOCK_DIR. */
+	private static final String LOCK_DIR = PropertyReader.getValue("stb.lock");
 
 	/** The Constant STB_LOCK. */
 	private static final String STB_LOCK = "stb.lock";
+	
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(STBController.class);
 
@@ -76,7 +80,7 @@ public class Main {
 		try (FileChannel channel = new RandomAccessFile(lockFilePath.toFile(), "rw").getChannel()) {
 			// Use the file channel to create a lock on the file.
 			// This method blocks until it can retrieve the lock.
-			lock = channel.tryLock();
+			//lock = channel.tryLock();
 
 			/*
 			 * use channel.lock OR channel.tryLock();
@@ -86,13 +90,13 @@ public class Main {
 			// null or throws an exception if the file is already locked.
 			// lock = channel.tryLock();
 
-			if (lock != null) {
+			//if (lock != null) {
 				Files.write(statusFilePath, "RUNNING".getBytes());
 				STBController.getInstance().start();
 				startShutDownWatcher(lockDirPath);
-			} else {
-				LOGGER.error("Could not start service as lock could not be acquired.");
-			}
+//			} else {
+//				LOGGER.error("Could not start service as lock could not be acquired.");
+//			}
 		} catch (OverlappingFileLockException e) {
 			// File is already locked in this thread or virtual machine
 			LOGGER.error("Could not start service as lock could not be acquired.");
@@ -103,15 +107,10 @@ public class Main {
 			if (lock != null) {
 				try {
 					lock.release();
+					Files.deleteIfExists(lockDirPath);
 				} catch (IOException e) {
 					LOGGER.error(e.getMessage(), e);
 				}
-			}
-			try {
-				Files.deleteIfExists(statusFilePath);
-				Files.deleteIfExists(statusFilePath);
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage(), e);
 			}
 		}
 	}
