@@ -18,10 +18,10 @@
 	<logger name="net.tomp2p.relay" level="INFO" /> <!-- mute tomp2p library -->
 	<logger name="net.tomp2p" level="INFO" /> <!-- mute tomp2p library -->
 	<logger name="io.netty" level="INFO" /> <!-- mute netty library -->
-	<logger name="org.stb" level="INFO" /> <!-- mute netty library -->
-	<logger name="org.hive2hive" level="INFO" /> <!-- mute netty library -->
+	<logger name="org.stb" level="DEBUG" /> <!-- mute netty library -->
+	<logger name="org.hive2hive" level="DEBUG" /> <!-- mute netty library -->
 	
-	<root level="INFO">
+	<root level="DEBUG">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FILE" />
 	</root>
