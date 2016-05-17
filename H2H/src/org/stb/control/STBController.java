@@ -10,6 +10,7 @@ import org.hive2hive.client.util.FileObserver;
 import org.hive2hive.core.api.interfaces.IH2HNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stb.main.Main;
 import org.stb.service.CredentialRegisterService;
 import org.stb.service.DiscoveryService;
 import org.stb.service.FileDHTService;
@@ -130,14 +131,16 @@ public final class STBController {
 
 		// Register to DHT network
 		boolean isRegistered = registerService.registerCredential(connectedNode, userCredential);
-
-		// Login to DHT network
 		if (isRegistered) {
-			loginService.loginToDHT(connectedNode, userCredential, root);
+			// Login to DHT network
+			boolean loginToDHT = loginService.loginToDHT(connectedNode, userCredential, root);
+			if (!loginToDHT) {
+				String message = "Couldn't Login as the User is not yet registered";
+				LOGGER.error(message);
+				System.out.println(message);
+				return;
+			}
 		} else {
-			String message = "Couldn't Login as the User is not yet registered";
-			LOGGER.error(message);
-			System.out.println(message);
 			return;
 		}
 
@@ -154,6 +157,16 @@ public final class STBController {
 		}
 
 		observer = fileDHTService.startObserver(connectedNode, new File(root));
+
+		Thread.sleep(10000L);
+		// get file list from DHT
+		List<String> fileListOnDHT2 = fileDHTService.getFileList(connectedNode);
+		LOGGER.info("Files found on DHT: {}", fileListOnDHT2);
+		Thread.sleep(70000L);
+		// get file list from DHT
+		List<String> fileListOnDHT3 = fileDHTService.getFileList(connectedNode);
+		LOGGER.info("Files found on DHT: {}", fileListOnDHT3);
+
 	}
 
 	/**
@@ -164,5 +177,6 @@ public final class STBController {
 	 */
 	public void stop() throws Exception {
 		shutDownService.stop(connectedNode, observer);
+		Main.shutdownWatcher();
 	}
 }

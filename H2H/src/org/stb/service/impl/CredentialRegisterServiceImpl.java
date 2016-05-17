@@ -30,12 +30,13 @@ public class CredentialRegisterServiceImpl implements CredentialRegisterService 
 				registerProcess.execute();
 				return true;
 			} catch (ProcessExecutionException e) {
+				LOGGER.info("User - {} could not be Registered as ", userCredentials.getUserId(), e.getMessage());
 				return false;
 			}
 		} else {
 			LOGGER.info("User - {} is Already Registered", userCredentials.getUserId());
+			return true;
 		}
-		return false;
 	}
 
 }
