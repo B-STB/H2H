@@ -147,25 +147,25 @@ public final class STBController {
 		// get file list from DHT
 		List<String> fileListOnDHT = fileDHTService.getFileList(connectedNode);
 
-		// Get all files in STB share folder. Check if files in fileList are
-		// present there.
-		// Perform file sync
-		if (fileListOnDHT != null && !fileListOnDHT.isEmpty()) {
-			fileDHTService.syncFilesWithDHT(connectedNode, fileListOnDHT, new File(root));
-		} else {
+		if (fileListOnDHT == null || fileListOnDHT.isEmpty()) {
 			LOGGER.info("No files found on DHT.");
 		}
 
+		// Get all files in STB share folder. Check if files in fileList are
+		// present there.
+		// Perform file sync
+			fileDHTService.syncFilesWithDHT(connectedNode, fileListOnDHT, new File(root));
+
 		observer = fileDHTService.startObserver(connectedNode, new File(root));
 
-		Thread.sleep(10000L);
-		// get file list from DHT
-		List<String> fileListOnDHT2 = fileDHTService.getFileList(connectedNode);
-		LOGGER.info("Files found on DHT: {}", fileListOnDHT2);
-		Thread.sleep(70000L);
-		// get file list from DHT
-		List<String> fileListOnDHT3 = fileDHTService.getFileList(connectedNode);
-		LOGGER.info("Files found on DHT: {}", fileListOnDHT3);
+//		Thread.sleep(10000L);
+//		// get file list from DHT
+//		List<String> fileListOnDHT2 = fileDHTService.getFileList(connectedNode);
+//		LOGGER.info("Files found on DHT: {}", fileListOnDHT2);
+//		Thread.sleep(70000L);
+//		// get file list from DHT
+//		List<String> fileListOnDHT3 = fileDHTService.getFileList(connectedNode);
+//		LOGGER.info("Files found on DHT: {}", fileListOnDHT3);
 
 	}
 

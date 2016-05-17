@@ -16,6 +16,9 @@ import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +34,22 @@ public class Main {
 
 	/** The Constant STB_STATUS. */
 	private static final String STB_STATUS = "stb.status";
-	
+
 	/** The Constant LOCK_DIR. */
 	private static final String LOCK_DIR = PropertyReader.getValue("stb.lock");
 
 	/** The Constant STB_LOCK. */
 	private static final String STB_LOCK = "stb.lock";
-	
+
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(STBController.class);
 
 	/** The watcher. */
 	private static WatchService watcher;
+
+	private static ExecutorService executor = Executors.newSingleThreadExecutor();
+
+	private static Future<?> shutdownThreadFuture;
 
 	/**
 	 * The main method.
@@ -83,7 +90,7 @@ public class Main {
 		try (FileChannel channel = new RandomAccessFile(lockFilePath.toFile(), "rw").getChannel()) {
 			// Use the file channel to create a lock on the file.
 			// This method blocks until it can retrieve the lock.
-			//lock = channel.tryLock();
+			// lock = channel.tryLock();
 
 			/*
 			 * use channel.lock OR channel.tryLock();
@@ -93,13 +100,14 @@ public class Main {
 			// null or throws an exception if the file is already locked.
 			// lock = channel.tryLock();
 
-			//if (lock != null) {
-				Files.write(statusFilePath, "RUNNING".getBytes());
-				startShutDownWatcher(lockDirPath);
-				STBController.getInstance().start();
-//			} else {
-//				LOGGER.error("Could not start service as lock could not be acquired.");
-//			}
+			// if (lock != null) {
+			Files.write(statusFilePath, "RUNNING".getBytes());
+			startShutDownWatcher(lockDirPath);
+			STBController.getInstance().start();
+			// } else {
+			// LOGGER.error("Could not start service as lock could not be
+			// acquired.");
+			// }
 		} catch (OverlappingFileLockException e) {
 			// File is already locked in this thread or virtual machine
 			LOGGER.error("Could not start service as lock could not be acquired.");
@@ -130,46 +138,59 @@ public class Main {
 			lockDirPath.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 
 			LOGGER.info("Watch Service to look for graceful shutdown registered for dir: " + lockDirPath.getFileName());
+			shutdownThreadFuture = executor.submit(new Runnable() {
 
-			while (true) {
-				WatchKey key;
-				try {
-					key = watcher.take();
-				} catch (InterruptedException ex) {
-					return;
-				}
+				@Override
+				public void run() {
 
-				for (WatchEvent<?> event : key.pollEvents()) {
-					WatchEvent.Kind<?> kind = event.kind();
+					while (true) {
+						WatchKey key;
+						try {
+							key = watcher.take();
+						} catch (InterruptedException ex) {
+							return;
+						}
 
-					@SuppressWarnings("unchecked")
-					WatchEvent<Path> ev = (WatchEvent<Path>) event;
-					Path fileName = ev.context();
+						for (WatchEvent<?> event : key.pollEvents()) {
+							WatchEvent.Kind<?> kind = event.kind();
 
-					System.out.println(kind.name() + ": " + fileName);
+							@SuppressWarnings("unchecked")
+							WatchEvent<Path> ev = (WatchEvent<Path>) event;
+							Path fileName = ev.context();
 
-					if (kind == ENTRY_MODIFY && fileName.toString().equals(STB_STATUS)) {
-						LOGGER.info("STB status file has changed! STB will be stopped.");
-						STBController.getInstance().stop();
-						break;
-					} else if (kind == ENTRY_DELETE && fileName.toString().equals(STB_STATUS)) {
-						LOGGER.info("STB status file has been deleted! STB will be stopped.");
-						STBController.getInstance().stop();
-						break;
+							System.out.println(kind.name() + ": " + fileName);
+
+							if (kind == ENTRY_MODIFY && fileName.toString().equals(STB_STATUS)) {
+								LOGGER.info("STB status file has changed! STB will be stopped.");
+								try {
+									STBController.getInstance().stop();
+								} catch (Exception e) {
+									LOGGER.error(e.getMessage(), e);
+								}
+								break;
+							} else if (kind == ENTRY_DELETE && fileName.toString().equals(STB_STATUS)) {
+								LOGGER.info("STB status file has been deleted! STB will be stopped.");
+								try {
+									STBController.getInstance().stop();
+								} catch (Exception e) {
+									LOGGER.error(e.getMessage(), e);
+								}
+								break;
+							}
+						}
+
+						boolean valid = key.reset();
+						if (!valid) {
+							break;
+						}
 					}
 				}
-
-				boolean valid = key.reset();
-				if (!valid) {
-					break;
-				}
-			}
-
+			});
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
-	
+
 	/**
 	 * Shutdown watcher.
 	 */
@@ -181,6 +202,10 @@ public class Main {
 				LOGGER.error(e.getMessage(), e);
 			}
 		}
+		if (!shutdownThreadFuture.isDone() || shutdownThreadFuture.isCancelled()) {
+			shutdownThreadFuture.cancel(true);
+		}
+		executor.shutdown();
 	}
 
 }

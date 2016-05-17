@@ -36,7 +36,7 @@ public class ShutDownServiceImpl implements ShutDownService {
 			} catch (Exception e) {
 				LOGGER.error("Cannot Gracefully Shutdown the STB");
 			} finally {
-				System.exit(0);
+				//System.exit(0);
 			}
 		}else{
 			LOGGER.info("File Observer was Not Running");

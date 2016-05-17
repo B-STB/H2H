@@ -30,7 +30,7 @@ public class LoginServiceImpl implements LoginService {
 	 */
 	@Override
 	public boolean loginToDHT(IH2HNode node, UserCredential credentials, String root) throws Exception {
-		LOGGER.info("Logging In with Credentials {} and root {}", credentials,root);
+		LOGGER.info("Logging In with Credentials {} and root {}", credentials, root);
 		IUserManager userManager = node.getUserManager();
 		if (userManager == null) {
 			throw new Exception("User Manager Cannot be Null");
