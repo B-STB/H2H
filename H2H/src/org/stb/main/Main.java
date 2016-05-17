@@ -95,8 +95,8 @@ public class Main {
 
 			//if (lock != null) {
 				Files.write(statusFilePath, "RUNNING".getBytes());
-				STBController.getInstance().start();
 				startShutDownWatcher(lockDirPath);
+				STBController.getInstance().start();
 //			} else {
 //				LOGGER.error("Could not start service as lock could not be acquired.");
 //			}
