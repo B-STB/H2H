@@ -15,7 +15,7 @@ else
 fi
 }
 start_stb() {
-nohup java -cp "./stbcontroller.jar:./lib/logback.xml:./lib/*" org.stb.main.Main &> nohup.out
+nohup java -cp "./stbcontroller.jar:./conf/*:./lib/*" org.stb.main.Main &> nohup.out
 }
 
 
