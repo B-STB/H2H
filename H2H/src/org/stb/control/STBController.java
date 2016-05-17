@@ -84,9 +84,18 @@ public final class STBController {
 	 *             the exception
 	 */
 	public void start() throws Exception {
-		// Run discovery
+		// Get properties from stb.properties
+
 		// Get bootstrap node ips from properties file.
 		boolean isBootstrapNode = Boolean.valueOf(PropertyReader.getValue("stb.isBootstrap"));
+
+		String userId = PropertyReader.getValue("stb.username");
+		char[] password = PropertyReader.getValue("stb.password").toCharArray();
+		String pin = PropertyReader.getValue("stb.pin");
+		String root = PropertyReader.getValue("stb.shareFolder");
+		UserCredential userCredential = new UserCredential(userId, password, pin);
+
+		// Run discovery
 		if (!isBootstrapNode) {
 			String bootstrapNodeIpsString = PropertyReader.getValue(BOOTSTRAP_IDS);
 			String[] bootstrapNodeIps = null;
@@ -96,7 +105,7 @@ public final class STBController {
 			} else {
 				bootstrapNodeIps = bootstrapNodeIpsString.split(",");
 			}
-			connectedNode = discoveryService.connectToBootstrapNodes(bootstrapNodeIps);
+			connectedNode = discoveryService.connectToBootstrapNodes(userId, bootstrapNodeIps);
 
 			if (connectedNode == null) {
 				String message = "Could not connect to DHT network as all Bootstrap nodes are down.";
@@ -106,16 +115,9 @@ public final class STBController {
 			}
 		} else {
 			LOGGER.info("Could not connect to any bootstrap nodes, starting node: {}", connectedNode);
-			connectedNode = discoveryService.startDHTNetwork();
+			connectedNode = discoveryService.startDHTNetwork(userId);
 		}
 		LOGGER.info("Connected node: {}", connectedNode);
-
-		// Get from stb.properties
-		String userId = PropertyReader.getValue("stb.username");
-		char[] password = PropertyReader.getValue("stb.password").toCharArray();
-		String pin = PropertyReader.getValue("stb.pin");
-		String root = PropertyReader.getValue("stb.shareFolder");
-		UserCredential userCredential = new UserCredential(userId, password, pin);
 
 		// Register to DHT network
 		boolean isRegistered = registerService.registerCredential(connectedNode, userCredential);

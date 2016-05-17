@@ -10,12 +10,12 @@ public interface DiscoveryService {
 	 * @param bootstrapIps the bootstrap node ips
 	 * @return true, if any of the ips were successfully connected
 	 */
-	IH2HNode connectToBootstrapNodes(String... bootstrapIps);
+	IH2HNode connectToBootstrapNodes(String nodeID, String... bootstrapIps);
 	
 	/**
 	 * Start dht network.
 	 * @return 
 	 */
-	IH2HNode startDHTNetwork();
+	IH2HNode startDHTNetwork(String nodeID);
 	
 }

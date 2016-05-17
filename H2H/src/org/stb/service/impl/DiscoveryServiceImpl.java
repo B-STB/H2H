@@ -28,12 +28,12 @@ public class DiscoveryServiceImpl implements DiscoveryService {
 	private IH2HNode node;
 
 	@Override
-	public IH2HNode connectToBootstrapNodes(String... bootstrapIps) {
+	public IH2HNode connectToBootstrapNodes(String nodeID, String... bootstrapIps) {
 
 		LOGGER.debug("Connecting to the bootstrap nodes : {} ", bootstrapIps.length);
 		boolean isNodeJoined = false;
 		for (String bootstrapIp : bootstrapIps) {
-			if(joinNode(bootstrapIp)) {
+			if(joinNode(bootstrapIp, nodeID)) {
 				isNodeJoined = true;
 				break;
 			}
@@ -45,8 +45,7 @@ public class DiscoveryServiceImpl implements DiscoveryService {
 	}
 
 	@Override
-	public IH2HNode startDHTNetwork() {
-		String nodeID = askNodeID();
+	public IH2HNode startDHTNetwork(String nodeID) {
 		return createNode(nodeID);
 	}
 
@@ -81,7 +80,7 @@ public class DiscoveryServiceImpl implements DiscoveryService {
 		return isNodeConnected;
 	}
 
-	private boolean joinNode(String bootstrapIP) {
+	private boolean joinNode(String bootstrapIP, String nodeID) {
 		LOGGER.info("Connect to Existing Network {} ", bootstrapIP);
 
 		InetAddress bootstrapAddress;
@@ -89,7 +88,7 @@ public class DiscoveryServiceImpl implements DiscoveryService {
 			bootstrapAddress = InetAddress.getByName(bootstrapIP);
 
 			buildNode();
-			NetworkConfiguration config = NetworkConfiguration.create(askNodeID(), bootstrapAddress);
+			NetworkConfiguration config = NetworkConfiguration.create(nodeID, bootstrapAddress);
 			if (!"default".equalsIgnoreCase(bootstrapPort)) {
 				config.setBootstrapPort(Integer.parseInt(bootstrapPort));
 			}
@@ -98,11 +97,5 @@ public class DiscoveryServiceImpl implements DiscoveryService {
 			LOGGER.error("Failed to join a node.");
 			return false;
 		}
-	}
-
-	private String askNodeID() {
-		// TODO: Fetch from property file first if not present generate random.
-		String nodeID = UUID.randomUUID().toString();
-		return nodeID;
 	}
 }
