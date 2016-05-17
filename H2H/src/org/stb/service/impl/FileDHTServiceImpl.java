@@ -116,7 +116,7 @@ public class FileDHTServiceImpl implements FileDHTService {
 		LOGGER.info("Files to download: {}", filesInSTB);
 		if (filesInSTB != null) {
 			for (String fileInStb : filesInSTB) {
-				workingFile = new File(file, fileInStb);
+				workingFile = new File(fileInStb);
 				IProcessComponent<Void> updateFileProcess = node.getFileManager().createDownloadProcess(workingFile);
 				updateFileProcess.execute();
 			}

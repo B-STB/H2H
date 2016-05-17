@@ -153,11 +153,7 @@ public final class STBController {
 		// Get all files in STB share folder. Check if files in fileList are
 		// present there.
 		// Perform file sync
-		if (fileListOnDHT != null && !fileListOnDHT.isEmpty()) {
 			fileDHTService.syncFilesWithDHT(connectedNode, fileListOnDHT, new File(root));
-		} else {
-			LOGGER.info("No files found on DHT.");
-		}
 
 		observer = fileDHTService.startObserver(connectedNode, new File(root));
 
