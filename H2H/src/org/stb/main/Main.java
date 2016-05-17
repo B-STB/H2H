@@ -51,9 +51,6 @@ public class Main {
 
 	private static Future<?> shutdownThreadFuture;
 
-	/** The watcher. */
-	private static WatchService watcher;
-
 	/**
 	 * The main method.
 	 *
@@ -194,19 +191,6 @@ public class Main {
 		}
 	}
 	
-	/**
-	 * Shutdown watcher.
-	 */
-	public static void shutdownWatcher() {
-		if (watcher != null) {
-			try {
-				watcher.close();
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}
-	}
-
 	/**
 	 * Shutdown watcher.
 	 */
