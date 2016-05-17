@@ -1,6 +1,7 @@
 package org.stb.service.impl;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,20 +30,22 @@ public class FileDHTServiceImpl implements FileDHTService {
 			InvalidProcessStateException, ProcessExecutionException {
 		IProcessComponent<FileNode> fileListProcess = node.getFileManager().createFileListProcess();
 		FileNode root = fileListProcess.execute();
-		List<String> fileOnSTBList = printRecursively(root, 0);
+		List<String> fileOnSTBList = collectRecursively(root, 0);
 		return fileOnSTBList;
 	}
 
 	@Override
-	public void addFile(String fileName) {
-		// TODO Auto-generated method stub
-
+	public void addFile(IH2HNode node, File file) throws NoPeerConnectionException, NoSessionException,
+			IllegalArgumentException, InvalidProcessStateException, ProcessExecutionException {
+		IProcessComponent<Void> addFileProcess = node.getFileManager().createAddProcess(file);
+		addFileProcess.execute();
 	}
 
 	@Override
-	public void downloadFile(String fileName) {
-		// TODO Auto-generated method stub
-
+	public void downloadFile(IH2HNode node, File file) throws NoPeerConnectionException, NoSessionException,
+			IllegalArgumentException, InvalidProcessStateException, ProcessExecutionException {
+		IProcessComponent<Void> updateFileProcess = node.getFileManager().createDownloadProcess(file);
+		updateFileProcess.execute();
 	}
 
 	@Override
@@ -62,24 +65,27 @@ public class FileDHTServiceImpl implements FileDHTService {
 		fileObserver.stop();
 	}
 
-	private List<String> printRecursively(FileNode node, int level) {
+	private List<String> collectRecursively(FileNode node, int level) {
 
 		List<String> fileList = new ArrayList<>();
 		if (node.getParent() != null) {
 			// skip the root node
+			
+			fileList.add(node.getFile().getAbsolutePath());
+			
+			//TODO check
 			StringBuilder spaces = new StringBuilder("*");
 			for (int i = 0; i < level; i++) {
 				spaces.append(" ");
 			}
-
-			String nodeName = spaces.toString() + node.getName();
-			fileList.add(nodeName);
+			String nodeName = spaces.append(node.getName()).toString();
 			print(nodeName);
 		}
 
 		if (node.isFolder()) {
 			for (FileNode child : node.getChildren()) {
-				printRecursively(child, level + 1);
+				fileList.add(child.getFile().getAbsolutePath());
+				collectRecursively(child, level + 1);
 			}
 		}
 		return fileList;
@@ -90,14 +96,15 @@ public class FileDHTServiceImpl implements FileDHTService {
 	}
 
 	@Override
-	public void syncFilesWithDHT(IH2HNode node, List<String> fileListOnDHT, File file) throws NoPeerConnectionException,
+	public void syncFilesWithDHT(IH2HNode node, List<String> fileListOnDHT, File rootDir) throws NoPeerConnectionException,
 			NoSessionException, IllegalArgumentException, InvalidProcessStateException, ProcessExecutionException {
-		List<String> filesInSTBList = FileUtils.getListOfFilesInDirectory(file);
+		LOGGER.info("Root folder: {}", rootDir);
+		List<String> filesInSTBList = FileUtils.getListOfFilesInDirectory(rootDir);
 		LOGGER.info("Files on DHT: {}", fileListOnDHT);
 		LOGGER.info("Files in STB: {}", filesInSTBList);
 		Set<String> filesInSTB = new HashSet<>(filesInSTBList);
 
-		List<String> excludedFilesOnSTB = new ArrayList<>();
+		List<String> fileOnDHTNotOnSTB = new ArrayList<>();
 
 		if (fileListOnDHT != null) {
 			for (String fileOnDHT : fileListOnDHT) {
@@ -105,32 +112,27 @@ public class FileDHTServiceImpl implements FileDHTService {
 					filesInSTB.remove(fileOnDHT); // LEFT over would be list of
 													// files not on the DHT
 				} else {
-					excludedFilesOnSTB.add(fileOnDHT); // LEFT over would be
+					fileOnDHTNotOnSTB.add(fileOnDHT); // LEFT over would be
 														// list of files not on
 														// the STB
 				}
 			}
-
 		}
-		File workingFile;
-		LOGGER.info("Files to download: {}", filesInSTB);
+		LOGGER.info("Files to download: {}", fileOnDHTNotOnSTB);
+		if (fileOnDHTNotOnSTB != null) {
+			for (String fileInStb : fileOnDHTNotOnSTB) {
+				File workingFile = new File(fileInStb);
+				downloadFile(node, workingFile);
+			}
+		}
+
+		LOGGER.info("Files to upload: {}", filesInSTB);
 		if (filesInSTB != null) {
-			for (String fileInStb : filesInSTB) {
-				workingFile = new File(fileInStb);
-				IProcessComponent<Void> updateFileProcess = node.getFileManager().createDownloadProcess(workingFile);
-				updateFileProcess.execute();
+			for (String fileForStb : filesInSTB) {
+				File workingFile = new File(fileForStb);
+				LOGGER.debug("File: {} is exist: {}", workingFile, workingFile.exists());
+				addFile(node, workingFile);
 			}
-		}
-
-		LOGGER.info("Files to upload: {}", excludedFilesOnSTB);
-		if (excludedFilesOnSTB != null) {
-			for (String fileInStb : excludedFilesOnSTB) {
-				workingFile = new File(file, fileInStb);
-
-				IProcessComponent<Void> addFileProcess = node.getFileManager().createAddProcess(workingFile);
-				addFileProcess.execute();
-			}
-
 		}
 	}
 

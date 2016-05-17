@@ -1,5 +1,7 @@
 package org.stb.service;
 
+import java.io.File;
+
 import org.hive2hive.core.api.interfaces.IH2HNode;
 import org.hive2hive.core.exceptions.NoPeerConnectionException;
 import org.hive2hive.processframework.exceptions.InvalidProcessStateException;
@@ -9,7 +11,7 @@ import org.stb.vo.UserCredential;
 /**
  * The Interface LoginService.
  * 
- * @author aneesh.n
+ * @author Aneesh.n
  */
 public interface LoginService {
 
@@ -25,7 +27,7 @@ public interface LoginService {
 	 * @throws NoPeerConnectionException             the no peer connection exception
 	 * @throws Exception             the exception
 	 */
-	boolean loginToDHT(IH2HNode node, UserCredential userCredential, String root)
+	boolean loginToDHT(IH2HNode node, UserCredential userCredential, File root)
 			throws InvalidProcessStateException, ProcessExecutionException, NoPeerConnectionException, Exception;
 
 }

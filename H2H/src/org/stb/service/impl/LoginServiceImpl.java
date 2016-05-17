@@ -29,16 +29,14 @@ public class LoginServiceImpl implements LoginService {
 	 * .IH2HNode, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean loginToDHT(IH2HNode node, UserCredential credentials, String root) throws Exception {
+	public boolean loginToDHT(IH2HNode node, UserCredential credentials, File root) throws Exception {
 		LOGGER.info("Logging In with Credentials {} and root {}", credentials, root);
 		IUserManager userManager = node.getUserManager();
 		if (userManager == null) {
 			throw new Exception("User Manager Cannot be Null");
 		}
 
-		File rootFolder = new File(root);
-
-		STBFileAgent fileAgent = new STBFileAgent(rootFolder);
+		STBFileAgent fileAgent = new STBFileAgent(root);
 
 		UserCredentials userCredentials = new UserCredentials(credentials.getUserName(),
 				String.valueOf(credentials.getPassword()), credentials.getPin());

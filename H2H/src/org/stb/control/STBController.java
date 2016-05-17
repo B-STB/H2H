@@ -98,9 +98,11 @@ public final class STBController {
 		String pin = PropertyReader.getValue("stb.pin");
 		String root = PropertyReader.getValue("stb.shareFolder");
 		Path rootPath = Paths.get(root);
+		rootPath = rootPath.toAbsolutePath();
+		File rootFile = rootPath.toFile();
 		if (Files.notExists(rootPath)) {
 			Files.createDirectory(rootPath);
-			LOGGER.info("Created root directory: {}", rootPath.getFileName());
+			LOGGER.info("Created root directory: {}", rootPath);
 		}
 		UserCredential userCredential = new UserCredential(userId, password, pin);
 
@@ -133,7 +135,7 @@ public final class STBController {
 		boolean isRegistered = registerService.registerCredential(connectedNode, userCredential);
 		if (isRegistered) {
 			// Login to DHT network
-			boolean loginToDHT = loginService.loginToDHT(connectedNode, userCredential, root);
+			boolean loginToDHT = loginService.loginToDHT(connectedNode, userCredential, rootFile);
 			if (!loginToDHT) {
 				String message = "Couldn't Login as the User is not yet registered";
 				LOGGER.error(message);
@@ -154,18 +156,20 @@ public final class STBController {
 		// Get all files in STB share folder. Check if files in fileList are
 		// present there.
 		// Perform file sync
-			fileDHTService.syncFilesWithDHT(connectedNode, fileListOnDHT, new File(root));
+		fileDHTService.syncFilesWithDHT(connectedNode, fileListOnDHT, rootFile);
 
-		observer = fileDHTService.startObserver(connectedNode, new File(root));
+		observer = fileDHTService.startObserver(connectedNode, rootFile);
 
-//		Thread.sleep(10000L);
-//		// get file list from DHT
-//		List<String> fileListOnDHT2 = fileDHTService.getFileList(connectedNode);
-//		LOGGER.info("Files found on DHT: {}", fileListOnDHT2);
-//		Thread.sleep(70000L);
-//		// get file list from DHT
-//		List<String> fileListOnDHT3 = fileDHTService.getFileList(connectedNode);
-//		LOGGER.info("Files found on DHT: {}", fileListOnDHT3);
+		// Thread.sleep(10000L);
+		// // get file list from DHT
+		// List<String> fileListOnDHT2 =
+		// fileDHTService.getFileList(connectedNode);
+		// LOGGER.info("Files found on DHT: {}", fileListOnDHT2);
+		// Thread.sleep(70000L);
+		// // get file list from DHT
+		// List<String> fileListOnDHT3 =
+		// fileDHTService.getFileList(connectedNode);
+		// LOGGER.info("Files found on DHT: {}", fileListOnDHT3);
 
 	}
 

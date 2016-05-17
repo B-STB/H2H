@@ -3,6 +3,7 @@ package org.stb.service.impl;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.UUID;
 
 import org.hive2hive.client.util.FileEventListener;
@@ -30,7 +31,7 @@ public class DiscoveryServiceImpl implements DiscoveryService {
 	@Override
 	public IH2HNode connectToBootstrapNodes(String nodeID, String... bootstrapIps) {
 
-		LOGGER.debug("Connecting to the bootstrap nodes : {} ", bootstrapIps.length);
+		LOGGER.debug("Connecting to the bootstrap nodes : {} ", Arrays.toString(bootstrapIps));
 		boolean isNodeJoined = false;
 		for (String bootstrapIp : bootstrapIps) {
 			if(joinNode(bootstrapIp, nodeID)) {
