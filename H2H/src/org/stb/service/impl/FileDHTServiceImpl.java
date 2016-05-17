@@ -48,7 +48,7 @@ public class FileDHTServiceImpl implements FileDHTService {
 	@Override
 	public FileObserver startObserver(IH2HNode node, File root) throws Exception {
 		// TODO get root and Interval from props
-		FileObserver fileObserver = new FileObserver(root, new Long("1000000"));
+		FileObserver fileObserver = new FileObserver(root);
 		FileObserverListener listener = new FileObserverListener(node.getFileManager());
 		fileObserver.addFileObserverListener(listener);
 

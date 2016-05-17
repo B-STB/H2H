@@ -114,7 +114,7 @@ public final class STBController {
 				return;
 			}
 		} else {
-			LOGGER.info("Could not connect to any bootstrap nodes, starting node: {}", connectedNode);
+			LOGGER.info("Starting DHTNetwork for nodeId: {}", userId);
 			connectedNode = discoveryService.startDHTNetwork(userId);
 		}
 		LOGGER.info("Connected node: {}", connectedNode);

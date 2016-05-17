@@ -31,7 +31,7 @@ public class ShutDownServiceImpl implements ShutDownService {
 		if (fileObserver != null && fileObserver.isRunning()) {
 			LOGGER.info("Stopping the file observer...");
 			try {
-				fileObserver.stop();
+				fileObserver.stop(1000L);
 				//TODO check what other clean up needs to be done
 			} catch (Exception e) {
 				LOGGER.error("Cannot Gracefully Shutdown the STB");
