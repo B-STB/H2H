@@ -15,7 +15,7 @@ else
 fi
 }
 start_stb() {
-nohup java -cp "./stbcontroller.jar:./conf/*:./lib/*" org.stb.main.Main &> nohup.out
+nohup java -cp "./lib/stbcontroller.jar:./conf/*:./lib/*" org.stb.main.Main &> nohup.out
 }
 
 
