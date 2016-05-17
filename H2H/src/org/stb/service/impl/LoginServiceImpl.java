@@ -47,7 +47,7 @@ public class LoginServiceImpl implements LoginService {
 			loginProcess.execute();
 			return true;
 		} catch (ProcessExecutionException e) {
-			LOGGER.info("User - {} is Already Registered", userCredentials.getUserId());
+			LOGGER.info("User - {} couldn't login as {}", userCredentials.getUserId(), e.getMessage());
 			return false;
 		}
 	}

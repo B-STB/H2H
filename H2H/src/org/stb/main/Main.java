@@ -41,6 +41,9 @@ public class Main {
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(STBController.class);
 
+	/** The watcher. */
+	private static WatchService watcher;
+
 	/**
 	 * The main method.
 	 *
@@ -123,7 +126,7 @@ public class Main {
 	 */
 	private static void startShutDownWatcher(Path lockDirPath) {
 		try {
-			WatchService watcher = FileSystems.getDefault().newWatchService();
+			watcher = FileSystems.getDefault().newWatchService();
 			lockDirPath.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 
 			LOGGER.info("Watch Service to look for graceful shutdown registered for dir: " + lockDirPath.getFileName());
@@ -164,6 +167,19 @@ public class Main {
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * Shutdown watcher.
+	 */
+	public static void shutdownWatcher() {
+		if (watcher != null) {
+			try {
+				watcher.close();
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
 		}
 	}
 
