@@ -1,6 +1,9 @@
 package org.stb.control;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.hive2hive.client.util.FileObserver;
@@ -93,6 +96,11 @@ public final class STBController {
 		char[] password = PropertyReader.getValue("stb.password").toCharArray();
 		String pin = PropertyReader.getValue("stb.pin");
 		String root = PropertyReader.getValue("stb.shareFolder");
+		Path rootPath = Paths.get(root);
+		if (Files.notExists(rootPath)) {
+			Files.createDirectory(rootPath);
+			LOGGER.info("Created root directory: {}", rootPath.getFileName());
+		}
 		UserCredential userCredential = new UserCredential(userId, password, pin);
 
 		// Run discovery
@@ -111,6 +119,7 @@ public final class STBController {
 				String message = "Could not connect to DHT network as all Bootstrap nodes are down.";
 				LOGGER.error(message);
 				System.out.println(message);
+				stop();
 				return;
 			}
 		} else {
@@ -126,7 +135,7 @@ public final class STBController {
 		if (isRegistered) {
 			loginService.loginToDHT(connectedNode, userCredential, root);
 		} else {
-			String message = "Couldnt Login as the User is not yet registered";
+			String message = "Couldn't Login as the User is not yet registered";
 			LOGGER.error(message);
 			System.out.println(message);
 			return;
