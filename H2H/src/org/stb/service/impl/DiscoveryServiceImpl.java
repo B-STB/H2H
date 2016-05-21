@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.UUID;
 
 import org.hive2hive.client.util.FileEventListener;
 import org.hive2hive.core.H2HConstants;
